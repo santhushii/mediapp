@@ -69,3 +69,14 @@ app.get("/get-patients", (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+// Fetch the most recent patient record
+app.get("/get-current-patient", (req, res) => {
+    try {
+        const row = db.prepare("SELECT * FROM patient_form ORDER BY id DESC LIMIT 1").get();
+        res.status(200).json(row);
+    } catch (error) {
+        console.error("Error fetching current patient:", error);
+        res.status(500).json({ error: "Failed to fetch current patient." });
+    }
+});
