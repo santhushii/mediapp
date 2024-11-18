@@ -1,10 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import PatientForm from './PatientForm'; // Import the PatientForm component
+import React from "react";
+import ReactDOM from "react-dom/client"; // Updated to React 18
+import App from "./App"; // Import the main App component
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+// Create a root for rendering the App component
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <PatientForm /> {/* Render the PatientForm component */}
+    <App />
   </React.StrictMode>
 );

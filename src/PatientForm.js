@@ -75,8 +75,23 @@ const PatientForm = () => {
         });
 
         if (response.ok) {
-          setShowSuccessMessage(true);
           alert("Form data saved successfully!");
+          setShowSuccessMessage(true);
+          // Reset the form after successful submission
+          setFormData({
+            NIC: "",
+            name: "",
+            age: "",
+            sex: "",
+            address: "",
+            contact: "",
+            weight: "",
+            height: "",
+            bmi: "",
+            allergies: "",
+            specialNotes: "",
+            profileImage: null,
+          });
         } else {
           alert("Failed to save form data.");
         }

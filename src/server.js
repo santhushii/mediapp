@@ -1,40 +1,71 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const db = require('./db/db'); // Ensure the correct path to `db.js`
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const db = require("./db/db"); // Ensure this points to your db.js file
 
 const app = express();
+const PORT = 3001;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// API to handle form submission
-app.post('/submit-form', (req, res) => {
+// Route: Submit Form Data
+app.post("/submit-form", (req, res) => {
     const {
-        NIC, name, age, sex, address, contact,
-        weight, height, bmi, allergies, specialNotes, profileImage
+        NIC,
+        name,
+        age,
+        sex,
+        address,
+        contact,
+        weight,
+        height,
+        bmi,
+        allergies,
+        specialNotes,
     } = req.body;
 
     try {
-        const stmt = db.prepare(`
-            INSERT INTO patient_form (
-                NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes, profileImage
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `);
-        stmt.run(
-            NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes, profileImage
+        const stmt = db.prepare(
+            `INSERT INTO patient_form 
+            (NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         );
 
-        res.status(200).send({ message: 'Form data saved successfully!' });
+        stmt.run(
+            NIC,
+            name,
+            age,
+            sex,
+            address,
+            contact,
+            weight,
+            height,
+            bmi,
+            allergies,
+            specialNotes
+        );
+
+        res.status(200).send({ message: "Form data saved successfully!" });
     } catch (error) {
-        console.error('Error saving form data:', error);
-        res.status(500).send({ error: 'Failed to save form data.' });
+        console.error("Error saving form data:", error);
+        res.status(500).send({ error: "Failed to save form data." });
     }
 });
 
-// Start the server
-const PORT = 3001;
+// Route: Get Patient History
+app.get("/get-patients", (req, res) => {
+    try {
+        const rows = db.prepare("SELECT * FROM patient_form").all();
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error("Error fetching patient history:", error);
+        res.status(500).json({ error: "Failed to fetch patient history." });
+    }
+});
+
+// Start the Server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
