@@ -13,10 +13,13 @@ const PatientForm = () => {
     height: "",
     bmi: "",
     allergies: "",
+    specialNotes: "",
     profileImage: null,
   });
 
-  const [submittedData, setSubmittedData] = useState(null); // State to store submitted data
+  const [submittedData, setSubmittedData] = useState(null); // State for submitted data
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State for success message
+  const [errors, setErrors] = useState({}); // State for form validation errors
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,13 +48,31 @@ const PatientForm = () => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      if (!formData[key] && key !== "profileImage" && key !== "bmi") {
+        newErrors[key] = "This field is required.";
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmittedData(formData); // Save submitted data
+    if (validateForm()) {
+      setSubmittedData(formData); // Save submitted data
+      setShowSuccessMessage(false); // Reset success message
+    }
   };
 
   const handleEdit = () => {
     setSubmittedData(null); // Clear submitted data to go back to form
+  };
+
+  const handleSave = () => {
+    setShowSuccessMessage(true); // Show success message
   };
 
   return (
@@ -86,10 +107,19 @@ const PatientForm = () => {
             <p><strong>Height:</strong> {submittedData.height} cm</p>
             <p><strong>BMI:</strong> {submittedData.bmi}</p>
             <p><strong>Allergies:</strong> {submittedData.allergies}</p>
+            <p><strong>Special Notes:</strong> {submittedData.specialNotes}</p>
           </div>
-          <button className="submit-btn" onClick={handleEdit}>
-            Edit Details
-          </button>
+          <div className="button-group">
+            <button className="submit-btn" onClick={handleEdit}>
+              Edit Details
+            </button>
+            <button className="submit-btn" onClick={handleSave}>
+              Save Details
+            </button>
+          </div>
+          {showSuccessMessage && (
+            <p className="success-message">Successfully added details!</p>
+          )}
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
@@ -122,6 +152,7 @@ const PatientForm = () => {
               value={formData.NIC}
               onChange={handleInputChange}
             />
+            {errors.NIC && <p className="error">{errors.NIC}</p>}
           </div>
           <div className="form-group">
             <label>Name:</label>
@@ -131,6 +162,7 @@ const PatientForm = () => {
               value={formData.name}
               onChange={handleInputChange}
             />
+            {errors.name && <p className="error">{errors.name}</p>}
           </div>
           <div className="form-group">
             <label>Age:</label>
@@ -140,6 +172,7 @@ const PatientForm = () => {
               value={formData.age}
               onChange={handleInputChange}
             />
+            {errors.age && <p className="error">{errors.age}</p>}
           </div>
           <div className="form-group">
             <label>Sex:</label>
@@ -152,6 +185,7 @@ const PatientForm = () => {
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
+            {errors.sex && <p className="error">{errors.sex}</p>}
           </div>
           <div className="form-group">
             <label>Address:</label>
@@ -161,6 +195,7 @@ const PatientForm = () => {
               value={formData.address}
               onChange={handleInputChange}
             />
+            {errors.address && <p className="error">{errors.address}</p>}
           </div>
           <div className="form-group">
             <label>Contact:</label>
@@ -170,6 +205,7 @@ const PatientForm = () => {
               value={formData.contact}
               onChange={handleInputChange}
             />
+            {errors.contact && <p className="error">{errors.contact}</p>}
           </div>
           <div className="form-group">
             <label>Weight (kg):</label>
@@ -182,6 +218,7 @@ const PatientForm = () => {
                 calculateBMI();
               }}
             />
+            {errors.weight && <p className="error">{errors.weight}</p>}
           </div>
           <div className="form-group">
             <label>Height (cm):</label>
@@ -194,6 +231,7 @@ const PatientForm = () => {
                 calculateBMI();
               }}
             />
+            {errors.height && <p className="error">{errors.height}</p>}
           </div>
           <div className="form-group">
             <label>BMI:</label>
@@ -206,6 +244,16 @@ const PatientForm = () => {
               value={formData.allergies}
               onChange={handleInputChange}
             />
+            {errors.allergies && <p className="error">{errors.allergies}</p>}
+          </div>
+          <div className="form-group">
+            <label>Special Notes:</label>
+            <textarea
+              name="specialNotes"
+              value={formData.specialNotes}
+              onChange={handleInputChange}
+            />
+            {errors.specialNotes && <p className="error">{errors.specialNotes}</p>}
           </div>
           <button type="submit" className="submit-btn">
             Submit
