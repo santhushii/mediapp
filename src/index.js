@@ -1,15 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-
-function App() {
-  return  (
-    <h1>Welcome</h1>
-  )
-}
+import PatientForm from './PatientForm'; // Import the PatientForm component
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <PatientForm /> {/* Render the PatientForm component */}
   </React.StrictMode>
 );
