@@ -65,7 +65,7 @@ try {
 
 // Route: Submit Form Data
 app.post("/submit-form", upload.single("profileImage"), (req, res) => {
-    console.log("Request Body:", req.body); 
+    console.log("Request Body:", req.body);
     console.log("Uploaded File:", req.file);
 
     const {

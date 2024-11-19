@@ -6,7 +6,21 @@ const PatientHistory = () => {
   const [history, setHistory] = useState([]); // List of reviewed patients
   const [error, setError] = useState(null);
 
-  // Fetch the current patient details
+  // Fetch all reviewed patient history
+  const fetchHistory = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/get-patients");
+      if (!response.ok) throw new Error("Failed to fetch patient history");
+
+      const data = await response.json();
+      setHistory(data); // Set reviewed patients
+    } catch (err) {
+      console.error("Error fetching patient history:", err.message);
+      setError(err.message);
+    }
+  };
+
+  // Fetch current patient details
   const fetchCurrentPatient = async () => {
     try {
       const response = await fetch("http://localhost:3001/get-current-patient");
@@ -25,17 +39,26 @@ const PatientHistory = () => {
     }
   };
 
-  // Fetch all reviewed patient history
-  const fetchHistory = async () => {
-    try {
-      const response = await fetch("http://localhost:3001/get-patients");
-      if (!response.ok) throw new Error("Failed to fetch patient history");
+  // Handle "Delete Patient" button click
+  const deletePatient = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this patient?")) return;
 
-      const data = await response.json();
-      setHistory(data); // Set reviewed patients
-    } catch (err) {
-      console.error("Error fetching patient history:", err.message);
-      setError(err.message);
+    try {
+      const response = await fetch(`http://localhost:3001/delete-patient/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        alert("Patient deleted successfully!");
+        // Refresh the history after deletion
+        fetchHistory();
+      } else {
+        const responseData = await response.json();
+        alert(`Failed to delete patient: ${responseData.error || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Error deleting patient:", error.message);
+      alert("An error occurred while deleting the patient.");
     }
   };
 
@@ -63,30 +86,6 @@ const PatientHistory = () => {
     }
   };
 
-  // Handle "Delete" button click for a reviewed patient
-  const deletePatient = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this patient?")) return;
-
-    try {
-      const response = await fetch(`http://localhost:3001/delete-patient/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        alert("Patient deleted successfully!");
-        // Refresh the history after deletion
-        fetchHistory();
-      } else {
-        const responseData = await response.json();
-        alert(`Failed to delete patient: ${responseData.error || "Unknown error"}`);
-      }
-    } catch (error) {
-      console.error("Error deleting patient:", error.message);
-      alert("An error occurred while deleting the patient.");
-    }
-  };
-
-  // Fetch current patient and history on component mount
   useEffect(() => {
     fetchCurrentPatient();
     fetchHistory();
@@ -146,7 +145,7 @@ const PatientHistory = () => {
                 <th>BMI</th>
                 <th>Allergies</th>
                 <th>Special Notes</th>
-                <th>Actions</th>
+                <th>Actions</th> {/* Add an Actions column */}
               </tr>
             </thead>
             <tbody>
@@ -168,7 +167,7 @@ const PatientHistory = () => {
                     >
                       Delete
                     </button>
-                  </td>
+                  </td> {/* Add delete button */}
                 </tr>
               ))}
             </tbody>
