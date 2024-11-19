@@ -63,6 +63,29 @@ const PatientHistory = () => {
     }
   };
 
+  // Handle "Delete" button click for a reviewed patient
+  const deletePatient = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this patient?")) return;
+
+    try {
+      const response = await fetch(`http://localhost:3001/delete-patient/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        alert("Patient deleted successfully!");
+        // Refresh the history after deletion
+        fetchHistory();
+      } else {
+        const responseData = await response.json();
+        alert(`Failed to delete patient: ${responseData.error || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Error deleting patient:", error.message);
+      alert("An error occurred while deleting the patient.");
+    }
+  };
+
   // Fetch current patient and history on component mount
   useEffect(() => {
     fetchCurrentPatient();
@@ -123,6 +146,7 @@ const PatientHistory = () => {
                 <th>BMI</th>
                 <th>Allergies</th>
                 <th>Special Notes</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -137,6 +161,14 @@ const PatientHistory = () => {
                   <td>{record.bmi}</td>
                   <td>{record.allergies}</td>
                   <td>{record.specialNotes}</td>
+                  <td>
+                    <button
+                      className="delete-btn"
+                      onClick={() => deletePatient(record.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

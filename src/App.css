@@ -34,6 +34,7 @@
     background-color: #f8f9fa;
     border-radius: 5px;
     border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Current Card Styles */
@@ -62,6 +63,8 @@
 
 .current-card p {
     margin: 8px 0;
+    font-size: 14px;
+    color: #333;
 }
 
 .current-card button {
@@ -86,6 +89,7 @@ table {
     margin: 16px auto;
     border-collapse: collapse;
     border: 1px solid #ddd;
+    font-size: 14px;
 }
 
 table th,
@@ -98,6 +102,7 @@ table td {
 table th {
     background-color: #f4f4f4;
     font-weight: bold;
+    text-align: center;
 }
 
 table tr:nth-child(even) {
@@ -113,4 +118,64 @@ h2,
 h3 {
     text-align: center;
     margin-top: 16px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+/* Button Styles for Forms */
+.submit-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 24px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Error Message Styles */
+.error {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.success-message {
+    color: green;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* General Input and Form Styles */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+}
+
+input[type="file"] {
+    margin-top: 8px;
+}
+
+label {
+    font-weight: bold;
+    color: #333;
 }

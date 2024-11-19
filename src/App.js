@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import PatientForm from "./PatientForm";
+import HealthNotes from "./HealthNotes";
 import PatientHistory from "./PatientHistory";
-import "./App.css"; // Ensure this file includes your styling
+import "./App.css";
 
 const App = () => {
-  const [activeTab, setActiveTab] = useState("form"); // Manage active tab state
+  const [activeTab, setActiveTab] = useState("form");
 
   return (
     <div>
@@ -17,6 +18,12 @@ const App = () => {
           Patient Form
         </button>
         <button
+          className={activeTab === "healthNotes" ? "active" : ""}
+          onClick={() => setActiveTab("healthNotes")}
+        >
+          Health Notes
+        </button>
+        <button
           className={activeTab === "history" ? "active" : ""}
           onClick={() => setActiveTab("history")}
         >
@@ -24,9 +31,10 @@ const App = () => {
         </button>
       </nav>
 
-      {/* Render the selected tab content */}
+      {/* Display Active Tab Content */}
       <div className="content">
         {activeTab === "form" && <PatientForm />}
+        {activeTab === "healthNotes" && <HealthNotes />}
         {activeTab === "history" && <PatientHistory />}
       </div>
     </div>

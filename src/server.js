@@ -35,7 +35,7 @@ const upload = multer({ storage });
 // Serve uploaded files statically
 app.use("/uploads", express.static(uploadDir));
 
-// Ensure the `reviewed` column exists
+// Ensure the `reviewed` column exists in `patient_form`
 try {
     db.prepare("ALTER TABLE patient_form ADD COLUMN reviewed INTEGER DEFAULT 0").run();
     console.log("Column `reviewed` added successfully!");
@@ -47,10 +47,26 @@ try {
     }
 }
 
+// Ensure the `health_notes` table exists
+try {
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS health_notes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            patientId TEXT NOT NULL,
+            pressureLevel TEXT NOT NULL,
+            sugarLevel TEXT NOT NULL,
+            notes TEXT
+        );
+    `);
+    console.log("Health notes table ensured successfully!");
+} catch (error) {
+    console.error("Error ensuring health_notes table:", error);
+}
+
 // Route: Submit Form Data
 app.post("/submit-form", upload.single("profileImage"), (req, res) => {
-    console.log("Request Body:", req.body); // Debug incoming data
-    console.log("Uploaded File:", req.file); // Debug uploaded file
+    console.log("Request Body:", req.body); 
+    console.log("Uploaded File:", req.file);
 
     const {
         NIC,
@@ -66,41 +82,26 @@ app.post("/submit-form", upload.single("profileImage"), (req, res) => {
         specialNotes,
     } = req.body;
 
-    const profileImage = req.file ? req.file.filename : null; // Save file name or null if no image
+    const profileImage = req.file ? req.file.filename : null;
 
-    // Validate required fields
     if (!NIC) {
-        console.error("Error: NIC is required.");
         return res.status(400).send({ error: "NIC is required." });
     }
 
     try {
-        const stmt = db.prepare(
-            `INSERT INTO patient_form 
+        const stmt = db.prepare(`
+            INSERT INTO patient_form 
             (NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes, profileImage, reviewed) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`
-        );
-
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+        `);
         stmt.run(
-            NIC,
-            name,
-            age,
-            sex,
-            address,
-            contact,
-            weight,
-            height,
-            bmi,
-            allergies,
-            specialNotes,
-            profileImage
+            NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes, profileImage
         );
 
-        console.log("Data saved successfully to the database.");
         res.status(200).send({ message: "Form data saved successfully!" });
     } catch (error) {
         console.error("Error saving form data:", error);
-        res.status(500).send({ error: "Failed to save form data.", details: error.message });
+        res.status(500).send({ error: "Failed to save form data." });
     }
 });
 
@@ -111,7 +112,6 @@ app.get("/get-current-patient", (req, res) => {
         if (row && row.profileImage) {
             row.profileImage = `http://localhost:${PORT}/uploads/${row.profileImage}`;
         }
-        console.log("Fetched current patient:", row);
         res.status(200).json(row || { error: "No current patient available." });
     } catch (error) {
         console.error("Error fetching current patient:", error);
@@ -122,10 +122,7 @@ app.get("/get-current-patient", (req, res) => {
 // Route: Mark as Reviewed
 app.post("/mark-reviewed", (req, res) => {
     const { id } = req.body;
-    console.log("Marking patient as reviewed, ID received from client:", id);
-
     if (!id) {
-        console.error("Error: ID is required to mark patient as reviewed.");
         return res.status(400).send({ error: "ID is required to mark patient as reviewed." });
     }
 
@@ -134,10 +131,8 @@ app.post("/mark-reviewed", (req, res) => {
         const result = stmt.run(id);
 
         if (result.changes > 0) {
-            console.log("Patient marked as reviewed, ID:", id);
             res.status(200).send({ message: "Patient marked as reviewed." });
         } else {
-            console.error("Error: Patient not found, ID:", id);
             res.status(404).send({ error: "Patient not found." });
         }
     } catch (error) {
@@ -150,11 +145,65 @@ app.post("/mark-reviewed", (req, res) => {
 app.get("/get-patients", (req, res) => {
     try {
         const rows = db.prepare("SELECT * FROM patient_form WHERE reviewed = 1").all();
-        console.log("Fetched patient history:", rows);
         res.status(200).json(rows || []);
     } catch (error) {
         console.error("Error fetching patient history:", error);
         res.status(500).json({ error: "Failed to fetch patient history." });
+    }
+});
+
+// Route: Delete a Reviewed Patient
+app.delete("/delete-patient/:id", (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+        return res.status(400).send({ error: "Patient ID is required to delete." });
+    }
+
+    try {
+        const stmt = db.prepare("DELETE FROM patient_form WHERE id = ?");
+        const result = stmt.run(id);
+
+        if (result.changes > 0) {
+            res.status(200).send({ message: "Patient deleted successfully." });
+        } else {
+            res.status(404).send({ error: "Patient not found." });
+        }
+    } catch (error) {
+        console.error("Error deleting patient:", error);
+        res.status(500).send({ error: "Failed to delete patient." });
+    }
+});
+
+// Route: Fetch all health notes
+app.get("/health-notes", (req, res) => {
+    try {
+        const rows = db.prepare("SELECT * FROM health_notes").all();
+        res.status(200).json(rows || []);
+    } catch (error) {
+        console.error("Error fetching health notes:", error);
+        res.status(500).json({ error: "Failed to fetch health notes." });
+    }
+});
+
+// Route: Submit a new health note
+app.post("/submit-health-note", (req, res) => {
+    const { patientId, pressureLevel, sugarLevel, notes } = req.body;
+
+    if (!patientId || !pressureLevel || !sugarLevel) {
+        return res.status(400).send({ error: "Patient ID, Pressure Level, and Sugar Level are required." });
+    }
+
+    try {
+        const stmt = db.prepare(`
+            INSERT INTO health_notes (patientId, pressureLevel, sugarLevel, notes)
+            VALUES (?, ?, ?, ?)
+        `);
+        stmt.run(patientId, pressureLevel, sugarLevel, notes || null);
+
+        res.status(200).send({ message: "Health note added successfully!" });
+    } catch (error) {
+        console.error("Error saving health note:", error);
+        res.status(500).send({ error: "Failed to save health note." });
     }
 });
 
