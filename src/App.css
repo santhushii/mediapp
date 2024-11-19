@@ -179,3 +179,19 @@ label {
     font-weight: bold;
     color: #333;
 }
+
+/* Delete Button Styles */
+.delete-btn {
+    background-color: #dc3545; /* Red color */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
