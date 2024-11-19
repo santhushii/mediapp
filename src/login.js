@@ -1,45 +1,71 @@
 import React, { useState } from "react";
-import "./login.css"; // Ensure this CSS file exists for styling
+import "./login.css";
 
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [isSignup, setIsSignup] = useState(false); // Toggle between Login and Signup
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simple authentication check for demo purposes
-    if (username === "admin" && password === "password") {
-      onLogin({ username }); // Pass user data to the parent component on successful login
+
+    if (email && password) {
+      if (isSignup) {
+        alert("Signup successful!");
+        setIsSignup(false); // Switch back to login after signup
+      } else {
+        // Simulate login success
+        onLogin({ username: email });
+      }
     } else {
-      setError("Invalid username or password"); // Set error message for failed login
+      alert("Please fill in all fields.");
     }
   };
 
   return (
     <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
-        <div className="form-group">
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
+      <form onSubmit={handleSubmit} className="login-form">
+        <h2>{isSignup ? "Signup Form" : "Login Form"}</h2>
+
+        <div className="toggle-buttons">
+          <button
+            type="button"
+            className={isSignup ? "" : "active"}
+            onClick={() => setIsSignup(false)}
+          >
+            Login
+          </button>
+          <button
+            type="button"
+            className={isSignup ? "active" : ""}
+            onClick={() => setIsSignup(true)}
+          >
+            Signup
+          </button>
         </div>
-        <div className="form-group">
+
+        <input
+          type="email"
+          placeholder="Email Address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        {isSignup && (
           <input
             type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Confirm Password"
             required
           />
-        </div>
-        <button type="submit" className="login-btn">Login</button>
-        {error && <p className="error-message">{error}</p>}
+        )}
+        <button type="submit">{isSignup ? "Signup" : "Login"}</button>
       </form>
     </div>
   );
