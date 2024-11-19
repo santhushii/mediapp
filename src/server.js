@@ -211,3 +211,24 @@ app.post("/submit-health-note", (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+app.post("/login", (req, res) => {
+    const { username, password } = req.body;
+  
+    // Dummy credentials (replace with database validation)
+    const validUsers = [
+      { username: "admin", password: "admin123" },
+      { username: "user", password: "user123" },
+    ];
+  
+    const user = validUsers.find(
+      (u) => u.username === username && u.password === password
+    );
+  
+    if (user) {
+      res.status(200).send({ message: "Login successful", username: user.username });
+    } else {
+      res.status(401).send({ error: "Invalid username or password" });
+    }
+  });
+  
