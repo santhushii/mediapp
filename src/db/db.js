@@ -18,9 +18,34 @@ db.exec(`
         bmi REAL NOT NULL,
         allergies TEXT,
         specialNotes TEXT,
-        profileImage TEXT
+        profileImage TEXT,
+        reviewed INTEGER DEFAULT 0
     );
 `);
+
+
+// Check for `reviewed` and `profileImage` columns and add them if missing
+try {
+    db.prepare("ALTER TABLE patient_form ADD COLUMN reviewed INTEGER DEFAULT 0").run();
+    console.log("Column `reviewed` added successfully!");
+} catch (error) {
+    if (error.message.includes("duplicate column name")) {
+        console.log("Column `reviewed` already exists. Skipping...");
+    } else {
+        console.error("Error adding column `reviewed`:", error);
+    }
+}
+
+try {
+    db.prepare("ALTER TABLE patient_form ADD COLUMN profileImage TEXT DEFAULT NULL").run();
+    console.log("Column `profileImage` added successfully!");
+} catch (error) {
+    if (error.message.includes("duplicate column name")) {
+        console.log("Column `profileImage` already exists. Skipping...");
+    } else {
+        console.error("Error adding column `profileImage`:", error);
+    }
+}
 
 console.log('Database initialized successfully!');
 

@@ -35,7 +35,7 @@ const PatientForm = () => {
     if (file) {
       setFormData((prevData) => ({
         ...prevData,
-        profileImage: URL.createObjectURL(file), // For preview purposes
+        profileImage: file, // Store the file object for uploading
       }));
     }
   };
@@ -55,7 +55,7 @@ const PatientForm = () => {
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
       if (!formData[key] && key !== "profileImage" && key !== "bmi") {
-        newErrors[key] = "This field is required.";
+        newErrors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`;
       }
     });
     setErrors(newErrors);
@@ -64,20 +64,30 @@ const PatientForm = () => {
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
 
     if (validateForm()) {
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (key === "profileImage" && formData[key]) {
+          formDataToSend.append(key, formData[key]);
+        } else {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
+
+      console.log("Form Data to Send (Debug):", ...formDataToSend.entries()); // Debugging: Check data
+
       try {
         const response = await fetch("http://localhost:3001/submit-form", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: formDataToSend,
         });
 
         if (response.ok) {
           alert("Form data saved successfully!");
           setShowSuccessMessage(true);
-          // Reset the form after successful submission
+          // Reset form data
           setFormData({
             NIC: "",
             name: "",
@@ -93,18 +103,25 @@ const PatientForm = () => {
             profileImage: null,
           });
         } else {
+          const errorData = await response.json();
+          console.error("Error from Server:", errorData);
           alert("Failed to save form data.");
         }
       } catch (error) {
-        console.error("Error saving data:", error);
+        console.error("Error during submission:", error);
+        alert("An error occurred while saving form data.");
       }
+    } else {
+      console.log("Validation Failed:", errors); // Debug validation errors
     }
   };
 
   return (
     <div className="form-container">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         <h2>Patient Form</h2>
+
+        {/* NIC Field */}
         <div className="form-group">
           <label>NIC:</label>
           <input
@@ -115,6 +132,8 @@ const PatientForm = () => {
           />
           {errors.NIC && <p className="error">{errors.NIC}</p>}
         </div>
+
+        {/* Name Field */}
         <div className="form-group">
           <label>Name:</label>
           <input
@@ -125,6 +144,8 @@ const PatientForm = () => {
           />
           {errors.name && <p className="error">{errors.name}</p>}
         </div>
+
+        {/* Age Field */}
         <div className="form-group">
           <label>Age:</label>
           <input
@@ -135,19 +156,19 @@ const PatientForm = () => {
           />
           {errors.age && <p className="error">{errors.age}</p>}
         </div>
+
+        {/* Sex Field */}
         <div className="form-group">
           <label>Sex:</label>
-          <select
-            name="sex"
-            value={formData.sex}
-            onChange={handleInputChange}
-          >
+          <select name="sex" value={formData.sex} onChange={handleInputChange}>
             <option value="">Select</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
           {errors.sex && <p className="error">{errors.sex}</p>}
         </div>
+
+        {/* Address Field */}
         <div className="form-group">
           <label>Address:</label>
           <input
@@ -158,6 +179,8 @@ const PatientForm = () => {
           />
           {errors.address && <p className="error">{errors.address}</p>}
         </div>
+
+        {/* Contact Field */}
         <div className="form-group">
           <label>Contact:</label>
           <input
@@ -168,6 +191,8 @@ const PatientForm = () => {
           />
           {errors.contact && <p className="error">{errors.contact}</p>}
         </div>
+
+        {/* Weight and Height */}
         <div className="form-group">
           <label>Weight (kg):</label>
           <input
@@ -194,10 +219,14 @@ const PatientForm = () => {
           />
           {errors.height && <p className="error">{errors.height}</p>}
         </div>
+
+        {/* BMI Field */}
         <div className="form-group">
           <label>BMI:</label>
           <input type="text" name="bmi" value={formData.bmi} readOnly />
         </div>
+
+        {/* Allergies Field */}
         <div className="form-group">
           <label>Allergies:</label>
           <textarea
@@ -207,6 +236,8 @@ const PatientForm = () => {
           />
           {errors.allergies && <p className="error">{errors.allergies}</p>}
         </div>
+
+        {/* Special Notes Field */}
         <div className="form-group">
           <label>Special Notes:</label>
           <textarea
@@ -216,10 +247,13 @@ const PatientForm = () => {
           />
           {errors.specialNotes && <p className="error">{errors.specialNotes}</p>}
         </div>
+
+        {/* Profile Image Upload */}
         <div className="form-group">
           <label>Upload Profile Image:</label>
           <input type="file" accept="image/*" onChange={handleImageUpload} />
         </div>
+
         <button type="submit" className="submit-btn">
           Submit
         </button>
