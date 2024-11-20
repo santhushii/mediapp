@@ -180,6 +180,14 @@ app.get("/get-current-patient", (req, res) => {
   });
 });
 
+// Get Reviewed Patients
+app.get("/get-patients", (req, res) => {
+  db.all("SELECT * FROM patient_form WHERE reviewed = 1", (err, rows) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch patient history." });
+    res.status(200).json(rows || []);
+  });
+});
+
 // Mark Patient as Reviewed
 app.post("/mark-reviewed", (req, res) => {
   const { id } = req.body;

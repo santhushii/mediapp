@@ -1,11 +1,16 @@
-const Database = require('better-sqlite3');
+const Database = require("better-sqlite3");
 
 // Create or open the SQLite database file
-const db = new Database('mediapp.db');
+const db = new Database("mediapp.db", { verbose: console.log }); // `verbose` logs executed SQL queries for debugging
 
-// Create the `patient_form` table if it doesn't already exist
-db.exec(`
-    CREATE TABLE IF NOT EXISTS patient_form (
+// Initialize database schema
+const initializeDB = () => {
+  try {
+    console.log("Initializing database...");
+
+    // Create `patient_form` table
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS patient_form (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         NIC TEXT NOT NULL,
         name TEXT NOT NULL,
@@ -18,36 +23,46 @@ db.exec(`
         bmi REAL NOT NULL,
         allergies TEXT,
         specialNotes TEXT,
-        profileImage TEXT,
+        profileImage TEXT DEFAULT NULL,
         reviewed INTEGER DEFAULT 0
-    );
-`);
+      );
+    `);
+    console.log("Table `patient_form` ensured successfully!");
 
+    // Create `health_notes` table
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS health_notes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        patientId INTEGER NOT NULL,
+        pressureLevel TEXT,
+        sugarLevel TEXT,
+        notes TEXT,
+        FOREIGN KEY(patientId) REFERENCES patient_form(id) ON DELETE CASCADE
+      );
+    `);
+    console.log("Table `health_notes` ensured successfully!");
 
-// Check for `reviewed` and `profileImage` columns and add them if missing
-try {
-    db.prepare("ALTER TABLE patient_form ADD COLUMN reviewed INTEGER DEFAULT 0").run();
-    console.log("Column `reviewed` added successfully!");
-} catch (error) {
-    if (error.message.includes("duplicate column name")) {
-        console.log("Column `reviewed` already exists. Skipping...");
-    } else {
-        console.error("Error adding column `reviewed`:", error);
-    }
-}
+    // Create `users` table for login/signup
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL
+      );
+    `);
+    console.log("Table `users` ensured successfully!");
 
-try {
-    db.prepare("ALTER TABLE patient_form ADD COLUMN profileImage TEXT DEFAULT NULL").run();
-    console.log("Column `profileImage` added successfully!");
-} catch (error) {
-    if (error.message.includes("duplicate column name")) {
-        console.log("Column `profileImage` already exists. Skipping...");
-    } else {
-        console.error("Error adding column `profileImage`:", error);
-    }
-}
+    // Enable foreign key constraints
+    db.exec("PRAGMA foreign_keys = ON;");
+    console.log("Foreign key constraints enabled.");
+  } catch (error) {
+    console.error("Error during database initialization:", error.message);
+    process.exit(1); // Exit the application if the database setup fails
+  }
+};
 
-console.log('Database initialized successfully!');
+// Initialize database on load
+initializeDB();
 
 // Export the database instance for use in other modules
 module.exports = db;
