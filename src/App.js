@@ -37,7 +37,7 @@ const App = () => {
 
       {/* Navigation Bar */}
       <nav className="navbar">
-        <div>
+        <div className="nav-links">
           <button
             className={activeTab === "form" ? "active" : ""}
             onClick={() => setActiveTab("form")}
