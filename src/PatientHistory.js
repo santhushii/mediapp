@@ -13,6 +13,7 @@ const PatientHistory = () => {
       if (!response.ok) throw new Error("Failed to fetch patient history");
 
       const data = await response.json();
+      console.log("Fetched patient history:", data); // Debugging
       setHistory(data); // Set reviewed patients
     } catch (err) {
       console.error("Error fetching patient history:", err.message);
@@ -27,6 +28,7 @@ const PatientHistory = () => {
       if (!response.ok) throw new Error("Failed to fetch current patient");
 
       const data = await response.json();
+      console.log("Fetched current patient:", data); // Debugging
 
       if (data.error) {
         setCurrentPatient(null); // No current patient
@@ -50,8 +52,7 @@ const PatientHistory = () => {
 
       if (response.ok) {
         alert("Patient deleted successfully!");
-        // Refresh the history after deletion
-        fetchHistory();
+        fetchHistory(); // Refresh the history after deletion
       } else {
         const responseData = await response.json();
         alert(`Failed to delete patient: ${responseData.error || "Unknown error"}`);
@@ -73,9 +74,8 @@ const PatientHistory = () => {
 
       if (response.ok) {
         alert("Patient marked as reviewed!");
-        // Refresh current patient and history
-        fetchCurrentPatient();
-        fetchHistory();
+        fetchCurrentPatient(); // Refresh current patient
+        fetchHistory(); // Refresh history
       } else {
         const responseData = await response.json();
         alert(`Failed to mark patient as reviewed: ${responseData.error || "Unknown error"}`);
