@@ -95,6 +95,21 @@ app.use("/uploads", express.static(uploadDir));
 
 // Routes
 
+// Forgot Password
+app.post("/forgot-password", (req, res) => {
+  const { email } = req.body;
+
+  // Check if the email exists in the database
+  db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    if (!user) return res.status(404).json({ error: "Email not found" });
+
+    // Simulate sending a reset password email (e.g., using a mail service)
+    console.log(`Reset link sent to ${email}`);
+    res.status(200).json({ message: "Reset instructions sent to your email!" });
+  });
+});
+
 // Signup
 app.post("/signup", async (req, res) => {
   const { email, password } = req.body;
