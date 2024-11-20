@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./App.css"; // Ensure this file includes required styles
 
-const PatientHistory = () => {
+const PatientHistory = ({ searchQuery }) => {
   const [currentPatient, setCurrentPatient] = useState(null); // Current patient details
   const [history, setHistory] = useState([]); // List of reviewed patients
+  const [filteredHistory, setFilteredHistory] = useState([]); // Filtered list for search
   const [error, setError] = useState(null);
 
   // Fetch all reviewed patient history
@@ -13,8 +14,8 @@ const PatientHistory = () => {
       if (!response.ok) throw new Error("Failed to fetch patient history");
 
       const data = await response.json();
-      console.log("Fetched patient history:", data); // Debugging
       setHistory(data); // Set reviewed patients
+      setFilteredHistory(data); // Initialize filtered data
     } catch (err) {
       console.error("Error fetching patient history:", err.message);
       setError(err.message);
@@ -28,18 +29,27 @@ const PatientHistory = () => {
       if (!response.ok) throw new Error("Failed to fetch current patient");
 
       const data = await response.json();
-      console.log("Fetched current patient:", data); // Debugging
-
-      if (data.error) {
-        setCurrentPatient(null); // No current patient
-      } else {
-        setCurrentPatient(data); // Set current patient
-      }
+      setCurrentPatient(data.error ? null : data); // Set current patient or null
     } catch (err) {
       console.error("Error fetching current patient:", err.message);
       setError(err.message);
     }
   };
+
+  // Filter results based on searchQuery
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredHistory(history);
+    } else {
+      const filtered = history.filter(
+        (patient) =>
+          patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          patient.NIC.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          patient.contact.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredHistory(filtered);
+    }
+  }, [searchQuery, history]);
 
   // Handle "Delete Patient" button click
   const deletePatient = async (id) => {
@@ -130,7 +140,7 @@ const PatientHistory = () => {
       )}
 
       {/* Reviewed Patients History */}
-      {history.length > 0 ? (
+      {filteredHistory.length > 0 ? (
         <div className="history-section">
           <h3>Reviewed Patients</h3>
           <table className="history-table">
@@ -145,11 +155,11 @@ const PatientHistory = () => {
                 <th>BMI</th>
                 <th>Allergies</th>
                 <th>Special Notes</th>
-                <th>Actions</th> {/* Add an Actions column */}
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {history.map((record) => (
+              {filteredHistory.map((record) => (
                 <tr key={record.id}>
                   <td>{record.id}</td>
                   <td>{record.NIC}</td>
@@ -167,14 +177,14 @@ const PatientHistory = () => {
                     >
                       Delete
                     </button>
-                  </td> {/* Add delete button */}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       ) : (
-        <p>No reviewed patient history available.</p>
+        <p>No matching patient history available.</p>
       )}
     </div>
   );

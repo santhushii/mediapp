@@ -5,7 +5,7 @@ import HealthNotes from "./HealthNotes"; // Health notes component
 import PatientHistory from "./PatientHistory"; // Patient history component
 import "./App.css"; // App-specific styles
 import "./login.css"; // Login-specific styles
-import './Navbar.css';
+import "./Navbar.css"; // Navbar-specific styles
 
 const App = () => {
   const [user, setUser] = useState(null); // Manage user login state
@@ -21,7 +21,6 @@ const App = () => {
     setActiveTab("form"); // Reset to default tab
   };
 
-  // Handle Search Query Change
   const handleSearch = (e) => {
     setSearchQuery(e.target.value); // Update search query state
   };
@@ -81,7 +80,9 @@ const App = () => {
       <div className="content">
         {activeTab === "form" && <PatientForm />}
         {activeTab === "healthNotes" && <HealthNotes />}
-        {activeTab === "history" && <PatientHistory searchQuery={searchQuery} />}
+        {activeTab === "history" && (
+          <PatientHistory searchQuery={searchQuery} />
+        )}
       </div>
     </div>
   );
