@@ -12,15 +12,18 @@ const App = () => {
   const [activeTab, setActiveTab] = useState("form"); // Manage active tab state
   const [searchQuery, setSearchQuery] = useState(""); // Search query state
 
+  // Login handler
   const handleLogin = (userData) => {
     setUser(userData); // Save logged-in user data
   };
 
+  // Logout handler
   const handleLogout = () => {
     setUser(null); // Clear user data to log out
     setActiveTab("form"); // Reset to default tab
   };
 
+  // Search input handler
   const handleSearch = (e) => {
     setSearchQuery(e.target.value); // Update search query state
   };
@@ -67,7 +70,7 @@ const App = () => {
         <div className="search-bar-container">
           <input
             type="text"
-            placeholder="Search patients..."
+            placeholder="Search patients... (Name, ID, etc.)"
             value={searchQuery}
             onChange={handleSearch}
             className="search-bar"
@@ -79,7 +82,9 @@ const App = () => {
       {/* Display Active Tab Content */}
       <div className="content">
         {activeTab === "form" && <PatientForm />}
-        {activeTab === "healthNotes" && <HealthNotes />}
+        {activeTab === "healthNotes" && (
+          <HealthNotes searchQuery={searchQuery} />
+        )}
         {activeTab === "history" && (
           <PatientHistory searchQuery={searchQuery} />
         )}

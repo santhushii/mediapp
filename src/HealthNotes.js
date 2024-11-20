@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import "./App.css"; // Ensure you create this CSS file for styling
+import "./App.css";
 
-const HealthNotes = () => {
+const HealthNotes = ({ searchQuery }) => {
   const [healthNotes, setHealthNotes] = useState([]);
+  const [filteredHealthNotes, setFilteredHealthNotes] = useState([]);
   const [formData, setFormData] = useState({
     patientId: "",
     pressureLevel: "",
@@ -17,12 +18,29 @@ const HealthNotes = () => {
     fetchHealthNotes();
   }, []);
 
+  // Update filtered list whenever `healthNotes` or `searchQuery` changes
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredHealthNotes(healthNotes);
+    } else {
+      const filtered = healthNotes.filter(
+        (note) =>
+          note.patientId.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+          note.pressureLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          note.sugarLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (note.notes && note.notes.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+      setFilteredHealthNotes(filtered);
+    }
+  }, [searchQuery, healthNotes]);
+
   const fetchHealthNotes = async () => {
     try {
       const response = await fetch("http://localhost:3001/health-notes");
       if (response.ok) {
         const data = await response.json();
         setHealthNotes(data);
+        setFilteredHealthNotes(data); // Initialize filtered data
       } else {
         console.error("Failed to fetch health notes");
       }
@@ -127,7 +145,7 @@ const HealthNotes = () => {
 
       {/* Display Section */}
       <h3>Recorded Health Notes</h3>
-      {healthNotes.length > 0 ? (
+      {filteredHealthNotes.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -139,7 +157,7 @@ const HealthNotes = () => {
             </tr>
           </thead>
           <tbody>
-            {healthNotes.map((note) => (
+            {filteredHealthNotes.map((note) => (
               <tr key={note.id}>
                 <td>{note.id}</td>
                 <td>{note.patientId}</td>
@@ -151,7 +169,7 @@ const HealthNotes = () => {
           </tbody>
         </table>
       ) : (
-        <p>No health notes recorded yet.</p>
+        <p>No matching health notes recorded yet.</p>
       )}
     </div>
   );
