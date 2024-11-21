@@ -17,6 +17,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
 // Database Setup
 const db = new sqlite3.Database(path.resolve(__dirname, "app.db"), (err) => {
   if (err) console.error("Database connection failed:", err.message);
