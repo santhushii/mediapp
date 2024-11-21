@@ -17,7 +17,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
 // Database Setup
 const db = new sqlite3.Database(path.resolve(__dirname, "app.db"), (err) => {
   if (err) console.error("Database connection failed:", err.message);
@@ -26,7 +25,6 @@ const db = new sqlite3.Database(path.resolve(__dirname, "app.db"), (err) => {
 
 // Ensure Tables Exist
 db.serialize(() => {
-  // Users Table
   db.run(
     `CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,7 +36,6 @@ db.serialize(() => {
     }
   );
 
-  // Patient Form Table
   db.run(
     `CREATE TABLE IF NOT EXISTS patient_form (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,7 +58,6 @@ db.serialize(() => {
     }
   );
 
-  // Health Notes Table
   db.run(
     `CREATE TABLE IF NOT EXISTS health_notes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -88,7 +84,7 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Add timestamp to file name
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 const upload = multer({ storage });
@@ -99,13 +95,10 @@ app.use("/uploads", express.static(uploadDir));
 // Forgot Password
 app.post("/forgot-password", (req, res) => {
   const { email } = req.body;
-
-  // Check if the email exists in the database
   db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
     if (err) return res.status(500).json({ error: "Database error" });
     if (!user) return res.status(404).json({ error: "Email not found" });
 
-    // Simulate sending a reset password email (e.g., using a mail service)
     console.log(`Reset link sent to ${email}`);
     res.status(200).json({ message: "Reset instructions sent to your email!" });
   });
@@ -157,6 +150,9 @@ app.post("/login", (req, res) => {
 
 // Submit Patient Form
 app.post("/submit-form", upload.single("profileImage"), (req, res) => {
+  console.log("Request body:", req.body); // Debugging
+  console.log("File info:", req.file); // Debugging
+
   const {
     NIC,
     name,
@@ -172,14 +168,17 @@ app.post("/submit-form", upload.single("profileImage"), (req, res) => {
   } = req.body;
 
   const profileImage = req.file ? req.file.filename : null;
-  if (!NIC) return res.status(400).send({ error: "NIC is required." });
 
   db.run(
     `INSERT INTO patient_form (NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes, profileImage, reviewed) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
     [NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes, profileImage],
     function (err) {
-      if (err) return res.status(500).send({ error: "Failed to save form data." });
+      if (err) {
+        console.error("SQL error:", err.message);
+        return res.status(500).send({ error: "Failed to save form data." });
+      }
+      console.log("Form data saved successfully!");
       res.status(200).send({ message: "Form data saved successfully!" });
     }
   );
