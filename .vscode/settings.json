@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "MediApp Database",
+            "database": "${workspaceFolder:mediapp}/src/db/mediapp.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
