@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 
-const HealthNotes = ({ searchQuery }) => {
-  const [healthNotes, setHealthNotes] = useState([]);
-  const [filteredHealthNotes, setFilteredHealthNotes] = useState([]);
+const NewPrescription = ({ searchQuery }) => {
+  const [NewPrescription, setNewPrescription] = useState([]);
+  const [filteredNewPrescription, setFilteredNewPrescription] = useState([]);
   const [formData, setFormData] = useState({
     patientId: "",
     pressureLevel: "",
@@ -13,39 +13,39 @@ const HealthNotes = ({ searchQuery }) => {
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Fetch existing health notes on component load
+  // Fetch existing New Prescription on component load
   useEffect(() => {
-    fetchHealthNotes();
+    fetchNewPrescription();
   }, []);
 
-  // Update filtered list whenever `healthNotes` or `searchQuery` changes
+  // Update filtered list whenever `NewPrescription` or `searchQuery` changes
   useEffect(() => {
     if (!searchQuery.trim()) {
-      setFilteredHealthNotes(healthNotes);
+      setFilteredNewPrescription(NewPrescription);
     } else {
-      const filtered = healthNotes.filter(
+      const filtered = NewPrescription.filter(
         (note) =>
           note.patientId.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
           note.pressureLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
           note.sugarLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
           (note.notes && note.notes.toLowerCase().includes(searchQuery.toLowerCase()))
       );
-      setFilteredHealthNotes(filtered);
+      setFilteredNewPrescription(filtered);
     }
-  }, [searchQuery, healthNotes]);
+  }, [searchQuery, NewPrescription]);
 
-  const fetchHealthNotes = async () => {
+  const fetchNewPrescription = async () => {
     try {
-      const response = await fetch("http://localhost:3001/health-notes");
+      const response = await fetch("http://localhost:3001/new-prescription");
       if (response.ok) {
         const data = await response.json();
-        setHealthNotes(data);
-        setFilteredHealthNotes(data); // Initialize filtered data
+        setNewPrescription(data);
+        setFilteredNewPrescription(data); // Initialize filtered data
       } else {
-        console.error("Failed to fetch health notes");
+        console.error("Failed to fetch New Prescription");
       }
     } catch (error) {
-      console.error("Error fetching health notes:", error);
+      console.error("Error fetching New Prescription:", error);
     }
   };
 
@@ -70,35 +70,35 @@ const HealthNotes = ({ searchQuery }) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const response = await fetch("http://localhost:3001/submit-health-note", {
+        const response = await fetch("http://localhost:3001/submit-new-prescription", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         });
         if (response.ok) {
-          setSuccessMessage("Health note added successfully!");
+          setSuccessMessage("New prescription added successfully!");
           setFormData({
             patientId: "",
             pressureLevel: "",
             sugarLevel: "",
             notes: "",
           });
-          fetchHealthNotes(); // Refresh the list
+          fetchNewPrescription(); // Refresh the list
         } else {
-          console.error("Failed to save health note");
+          console.error("Failed to save New prescription");
         }
       } catch (error) {
-        console.error("Error saving health note:", error);
+        console.error("Error saving New prescription:", error);
       }
     }
   };
 
   return (
-    <div className="health-notes-container">
-      <h2>Health Notes</h2>
+    <div className="new-prescription-container">
+      <h2>New Prescription</h2>
 
       {/* Form Section */}
-      <form onSubmit={handleSubmit} className="health-notes-form">
+      <form onSubmit={handleSubmit} className="new-prescription-form">
         <div className="form-group">
           <label>Patient ID:</label>
           <input
@@ -138,14 +138,14 @@ const HealthNotes = ({ searchQuery }) => {
           ></textarea>
         </div>
         <button type="submit" className="submit-btn">
-          Add Health Note
+          Add New prescription
         </button>
         {successMessage && <p className="success-message">{successMessage}</p>}
       </form>
 
       {/* Display Section */}
-      <h3>Recorded Health Notes</h3>
-      {filteredHealthNotes.length > 0 ? (
+      <h3>Recorded New Prescription</h3>
+      {filteredNewPrescription.length > 0 ? (
         <table>
           <thead>
             <tr>
@@ -157,7 +157,7 @@ const HealthNotes = ({ searchQuery }) => {
             </tr>
           </thead>
           <tbody>
-            {filteredHealthNotes.map((note) => (
+            {filteredNewPrescription.map((note) => (
               <tr key={note.id}>
                 <td>{note.id}</td>
                 <td>{note.patientId}</td>
@@ -169,10 +169,10 @@ const HealthNotes = ({ searchQuery }) => {
           </tbody>
         </table>
       ) : (
-        <p>No matching health notes recorded yet.</p>
+        <p>No matching New Prescription recorded yet.</p>
       )}
     </div>
   );
 };
 
-export default HealthNotes;
+export default NewPrescription;

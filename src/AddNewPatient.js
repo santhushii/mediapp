@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "./PatientForm.css";
+import "./AddNewPatient.css";
 
-const PatientForm = () => {
+const AddNewPatient = () => {
   const [formData, setFormData] = useState({
     NIC: "",
     name: "",
@@ -119,7 +119,7 @@ const PatientForm = () => {
   return (
     <div className="form-container">
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <h2>Patient Form</h2>
+        <h2>Add New Patient</h2>
 
         {/* NIC Field */}
         <div className="form-group">
@@ -265,4 +265,4 @@ const PatientForm = () => {
   );
 };
 
-export default PatientForm;
+export default AddNewPatient;

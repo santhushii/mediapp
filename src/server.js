@@ -7,10 +7,11 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
+require("dotenv").config();
 
 const app = express();
 const PORT = 3001;
-const SECRET_KEY = "your_jwt_secret"; // JWT Secret Key
+const SECRET_KEY = process.env.SECRET_KEY || "your_jwt_secret"; // Use env variable for JWT secret
 
 // Middleware
 app.use(cors());
@@ -25,18 +26,12 @@ const db = new sqlite3.Database(path.resolve(__dirname, "app.db"), (err) => {
 
 // Ensure Tables Exist
 db.serialize(() => {
-  db.run(
+  const createTables = [
     `CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL
     )`,
-    (err) => {
-      if (err) console.error("Failed to create users table:", err.message);
-    }
-  );
-
-  db.run(
     `CREATE TABLE IF NOT EXISTS patient_form (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       NIC TEXT NOT NULL,
@@ -53,23 +48,20 @@ db.serialize(() => {
       profileImage TEXT,
       reviewed INTEGER DEFAULT 0
     )`,
-    (err) => {
-      if (err) console.error("Failed to create patient_form table:", err.message);
-    }
-  );
-
-  db.run(
-    `CREATE TABLE IF NOT EXISTS health_notes (
+    `CREATE TABLE IF NOT EXISTS new_prescription (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       patientId INTEGER NOT NULL,
       pressureLevel TEXT,
       sugarLevel TEXT,
       notes TEXT
     )`,
-    (err) => {
-      if (err) console.error("Failed to create health_notes table:", err.message);
-    }
-  );
+  ];
+
+  createTables.forEach((query) => {
+    db.run(query, (err) => {
+      if (err) console.error("Failed to create table:", err.message);
+    });
+  });
 });
 
 // Ensure uploads folder exists
@@ -84,7 +76,7 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 const upload = multer({ storage });
@@ -95,6 +87,8 @@ app.use("/uploads", express.static(uploadDir));
 // Forgot Password
 app.post("/forgot-password", (req, res) => {
   const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "Email is required." });
+
   db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
     if (err) return res.status(500).json({ error: "Database error" });
     if (!user) return res.status(404).json({ error: "Email not found" });
@@ -110,6 +104,7 @@ app.post("/signup", async (req, res) => {
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required." });
   }
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     db.run(
@@ -136,6 +131,7 @@ app.post("/login", (req, res) => {
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required." });
   }
+
   db.get(`SELECT * FROM users WHERE email = ?`, [email], async (err, user) => {
     if (err) return res.status(500).json({ error: "Database error." });
     if (!user) return res.status(401).json({ error: "Invalid credentials." });
@@ -143,16 +139,15 @@ app.post("/login", (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials." });
 
-    const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
     res.status(200).json({ message: "Login successful!", token });
   });
 });
 
-// Submit Patient Form
+// Submit Add New Patient
 app.post("/submit-form", upload.single("profileImage"), (req, res) => {
-  console.log("Request body:", req.body); // Debugging
-  console.log("File info:", req.file); // Debugging
-
   const {
     NIC,
     name,
@@ -174,17 +169,13 @@ app.post("/submit-form", upload.single("profileImage"), (req, res) => {
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
     [NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes, profileImage],
     function (err) {
-      if (err) {
-        console.error("SQL error:", err.message);
-        return res.status(500).send({ error: "Failed to save form data." });
-      }
-      console.log("Form data saved successfully!");
-      res.status(200).send({ message: "Form data saved successfully!" });
+      if (err) return res.status(500).json({ error: "Failed to save form data." });
+      res.status(200).json({ message: "Form data saved successfully!" });
     }
   );
 });
 
-// Get Current Patient
+// Fetch Current Patient
 app.get("/get-current-patient", (req, res) => {
   db.get("SELECT * FROM patient_form WHERE reviewed = 0 ORDER BY id DESC LIMIT 1", (err, row) => {
     if (err) return res.status(500).json({ error: "Failed to fetch current patient." });
@@ -206,49 +197,49 @@ app.get("/get-patients", (req, res) => {
 // Mark Patient as Reviewed
 app.post("/mark-reviewed", (req, res) => {
   const { id } = req.body;
-  if (!id) return res.status(400).send({ error: "ID is required to mark patient as reviewed." });
+  if (!id) return res.status(400).json({ error: "ID is required to mark patient as reviewed." });
 
   db.run("UPDATE patient_form SET reviewed = 1 WHERE id = ?", [id], function (err) {
-    if (err) return res.status(500).send({ error: "Failed to mark patient as reviewed." });
-    if (this.changes > 0) res.status(200).send({ message: "Patient marked as reviewed." });
-    else res.status(404).send({ error: "Patient not found." });
+    if (err) return res.status(500).json({ error: "Failed to mark patient as reviewed." });
+    if (this.changes > 0) res.status(200).json({ message: "Patient marked as reviewed." });
+    else res.status(404).json({ error: "Patient not found." });
   });
 });
 
 // Delete Patient
 app.delete("/delete-patient/:id", (req, res) => {
   const { id } = req.params;
-  if (!id) return res.status(400).send({ error: "Patient ID is required to delete." });
+  if (!id) return res.status(400).json({ error: "Patient ID is required to delete." });
 
   db.run("DELETE FROM patient_form WHERE id = ?", [id], function (err) {
-    if (err) return res.status(500).send({ error: "Failed to delete patient." });
-    if (this.changes > 0) res.status(200).send({ message: "Patient deleted successfully." });
-    else res.status(404).send({ error: "Patient not found." });
+    if (err) return res.status(500).json({ error: "Failed to delete patient." });
+    if (this.changes > 0) res.status(200).json({ message: "Patient deleted successfully." });
+    else res.status(404).json({ error: "Patient not found." });
   });
 });
 
-// Submit Health Notes
-app.post("/submit-health-note", (req, res) => {
+// Submit New Prescription
+app.post("/submit-new-prescription", (req, res) => {
   const { patientId, pressureLevel, sugarLevel, notes } = req.body;
 
   if (!patientId || !pressureLevel || !sugarLevel) {
-    return res.status(400).send({ error: "Patient ID, Pressure Level, and Sugar Level are required." });
+    return res.status(400).json({ error: "Patient ID, Pressure Level, and Sugar Level are required." });
   }
 
   db.run(
-    `INSERT INTO health_notes (patientId, pressureLevel, sugarLevel, notes) VALUES (?, ?, ?, ?)`,
+    `INSERT INTO new_prescription (patientId, pressureLevel, sugarLevel, notes) VALUES (?, ?, ?, ?)`,
     [patientId, pressureLevel, sugarLevel, notes],
     function (err) {
-      if (err) return res.status(500).send({ error: "Failed to save health note." });
-      res.status(200).send({ message: "Health note added successfully!" });
+      if (err) return res.status(500).json({ error: "Failed to save New prescription." });
+      res.status(200).json({ message: "New prescription added successfully!" });
     }
   );
 });
 
-// Fetch Health Notes
-app.get("/health-notes", (req, res) => {
-  db.all("SELECT * FROM health_notes", (err, rows) => {
-    if (err) return res.status(500).json({ error: "Failed to fetch health notes." });
+// Fetch New Prescription
+app.get("/new-prescription", (req, res) => {
+  db.all("SELECT * FROM new_prescription", (err, rows) => {
+    if (err) return res.status(500).json({ error: "Failed to fetch New Prescription." });
     res.status(200).json(rows || []);
   });
 });

@@ -16,13 +16,13 @@ const Navbar = ({ activeTab, setActiveTab, onSearch }) => {
           className={activeTab === "form" ? "active" : ""}
           onClick={() => setActiveTab("form")}
         >
-          Patient Form
+          Add New Patient
         </button>
         <button
-          className={activeTab === "healthNotes" ? "active" : ""}
-          onClick={() => setActiveTab("healthNotes")}
+          className={activeTab === "NewPrescription" ? "active" : ""}
+          onClick={() => setActiveTab("NewPrescription")}
         >
-          Health Notes
+          New Prescription
         </button>
         <button
           className={activeTab === "history" ? "active" : ""}

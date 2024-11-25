@@ -29,9 +29,9 @@ const initializeDB = () => {
     `);
     console.log("Table `patient_form` ensured successfully!");
 
-    // Create `health_notes` table
+    // Create `new_prescription` table
     db.exec(`
-      CREATE TABLE IF NOT EXISTS health_notes (
+      CREATE TABLE IF NOT EXISTS new_prescription (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         patientId INTEGER NOT NULL,
         pressureLevel TEXT,
@@ -40,7 +40,7 @@ const initializeDB = () => {
         FOREIGN KEY(patientId) REFERENCES patient_form(id) ON DELETE CASCADE
       );
     `);
-    console.log("Table `health_notes` ensured successfully!");
+    console.log("Table `new_prescription` ensured successfully!");
 
     // Create `users` table for login/signup
     db.exec(`

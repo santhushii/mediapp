@@ -1,10 +1,10 @@
 Patient Management App
-A simple app to manage patient details, history, and health notes.
+A simple app to manage patient details, history, and New Prescription.
 
 Features
 Add patient details, including profile images.
 View reviewed patient history.
-Add health notes for pressure and sugar levels.
+Add New Prescription for pressure and sugar levels.
 Delete reviewed patient records.
 Prerequisites
 Node.js and npm installed
@@ -31,9 +31,9 @@ npm start
 The app will open in your browser at http://localhost:3000.
 
 Usage
-Patient Form Tab: Add patient details.
+Add New Patient Tab: Add patient details.
 Patient History Tab: View and delete reviewed patients.
-Health Notes Tab: Add and view health notes.
+New Prescription Tab: Add and view New Prescription.
 
 API Overview
 Patient Management
@@ -44,6 +44,6 @@ GET /get-patients: Get all reviewed patients
 DELETE /delete-patient/:id: Delete a reviewed patient
 
 
-Health Notes
-GET /health-notes: Get health notes
-POST /submit-health-note: Add a health note
+New Prescription
+GET /new-prescription: Get New Prescription
+POST /submit-new-prescription: Add a New prescription

@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // React Router components
 import Login from "./login"; // Login component
-import PatientForm from "./PatientForm"; // Patient form component
-import HealthNotes from "./HealthNotes"; // Health notes component
+import AddNewPatient from "./AddNewPatient"; // Add New Patient component
+import NewPrescription from "./NewPrescription"; // New Prescription component
 import PatientHistory from "./PatientHistory"; // Patient history component
 import ForgotPassword from "./ForgotPassword"; // Forgot password component
 
 import "./App.css"; // App-specific styles
 import "./login.css"; // Login-specific styles
 import "./Navbar.css"; // Navbar-specific styles
+
 
 const App = () => {
   const [user, setUser] = useState(null); // Manage user login state
@@ -70,13 +71,13 @@ const App = () => {
                         className={activeTab === "form" ? "active" : ""}
                         onClick={() => setActiveTab("form")}
                       >
-                        Patient Form
+                        Add New Patient
                       </button>
                       <button
-                        className={activeTab === "healthNotes" ? "active" : ""}
-                        onClick={() => setActiveTab("healthNotes")}
+                        className={activeTab === "NewPrescription" ? "active" : ""}
+                        onClick={() => setActiveTab("NewPrescription")}
                       >
-                        Health Notes
+                        New Prescription
                       </button>
                       <button
                         className={activeTab === "history" ? "active" : ""}
@@ -101,9 +102,9 @@ const App = () => {
 
                   {/* Display Active Tab Content */}
                   <div className="content">
-                    {activeTab === "form" && <PatientForm />}
-                    {activeTab === "healthNotes" && (
-                      <HealthNotes searchQuery={searchQuery} />
+                    {activeTab === "form" && <AddNewPatient />}
+                    {activeTab === "NewPrescription" && (
+                      <NewPrescription searchQuery={searchQuery} />
                     )}
                     {activeTab === "history" && (
                       <PatientHistory searchQuery={searchQuery} />
