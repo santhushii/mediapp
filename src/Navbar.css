@@ -9,35 +9,62 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     margin-bottom: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-/* Navigation Buttons */
+/* Navigation Links (Left) */
 .navbar .nav-links {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
 }
 
-.navbar button {
+.navbar .nav-links button {
     color: white;
     background-color: transparent;
-    border: 1px solid transparent;
+    border: none;
     font-size: 16px;
-    padding: 8px 20px;
+    padding: 8px 12px;
+    cursor: pointer;
+    text-transform: capitalize; /* Ensure proper capitalization */
+}
+
+.navbar .nav-links button:hover {
+    text-decoration: underline;
+    color: #e2e2e2;
+}
+
+/* Action Container (Center and Right) */
+.navbar .action-container {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Space between Add New Patient and Search Bar */
+}
+
+/* Add New Patient Button */
+.navbar .add-new-btn {
+    color: black;
+    background-color: white;
+    border: 1px solid black;
+    font-size: 14px;
+    padding: 6px 12px;
     border-radius: 5px;
     transition: all 0.3s ease;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Gap between the "+" icon and text */
 }
 
-.navbar button:hover {
-    background-color: #0056b3;
-    border-color: #004085;
+.navbar .add-new-btn span {
+    font-size: 18px; /* Size for the "+" icon */
+    font-weight: bold;
 }
 
-.navbar button.active {
-    background-color: white;
-    color: #007bff;
-    border-color: #004085;
+.navbar .add-new-btn:hover {
+    background-color: #e2e2e2;
 }
 
 /* Search Bar */
@@ -48,7 +75,7 @@
 }
 
 .navbar .search-bar {
-    padding: 6px 12px;
+    padding: 8px 12px;
     font-size: 14px;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -64,8 +91,8 @@
 
 .navbar .search-btn {
     background-color: white;
-    color: #007bff;
-    border: 1px solid #007bff;
+    color: black;
+    border: 1px solid black;
     padding: 6px 12px;
     border-radius: 5px;
     font-size: 14px;
@@ -74,12 +101,35 @@
 }
 
 .navbar .search-btn:hover {
-    background-color: #007bff;
-    color: white;
+    background-color: #f0f0f0;
+    color: #007bff;
 }
 
-/* Navbar Title */
-.navbar .navbar-title {
-    font-size: 20px;
+/* Active Button Highlight */
+.navbar .nav-links button.active,
+.navbar .add-new-btn.active {
+    background-color: white;
+    color: #007bff;
+    border: 1px solid #007bff;
     font-weight: bold;
+}
+
+/* Default Button Styling */
+.navbar .nav-links button,
+.navbar .add-new-btn {
+    color: white;
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Button Hover */
+.navbar .nav-links button:hover,
+.navbar .add-new-btn:hover {
+    background-color: #0056b3;
+    color: white;
+    border-radius: 5px;
 }

@@ -159,7 +159,7 @@ const AddNewPatient = () => {
 
         {/* Sex Field */}
         <div className="form-group">
-          <label>Sex:</label>
+          <label>Gender:</label>
           <select name="sex" value={formData.sex} onChange={handleInputChange}>
             <option value="">Select</option>
             <option value="male">Male</option>

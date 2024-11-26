@@ -1,24 +1,27 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // For navigation
-import "./login.css"; // Ensure this file contains appropriate styles
+import { useNavigate } from "react-router-dom";
+import "./login.css";
 
 const Login = ({ onLogin, onSignup }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLogin, setIsLogin] = useState(true); // Toggle between Login and Signup
-  const navigate = useNavigate(); // React Router navigation
+  const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
 
-  // Handle form submission for Login or Signup
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!email || !password) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
     if (isLogin) {
-      // Trigger login handler
       onLogin({ email, password });
-      navigate("/dashboard"); // Navigate to the dashboard on successful login
+      navigate("/dashboard");
     } else {
-      // Trigger signup handler
       onSignup({ email, password });
-      setIsLogin(true); // Switch to login after signup
+      navigate("/dashboard");
     }
   };
 
@@ -31,7 +34,7 @@ const Login = ({ onLogin, onSignup }) => {
     <div className="login-container">
       <h2>{isLogin ? "Login Form" : "Signup Form"}</h2>
 
-      {/* Toggle Buttons for Login and Signup */}
+      {/* Toggle Buttons */}
       <div className="toggle-buttons">
         <button
           className={isLogin ? "active" : ""}
@@ -47,7 +50,7 @@ const Login = ({ onLogin, onSignup }) => {
         </button>
       </div>
 
-      {/* Login/Signup Form */}
+      {/* Form */}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Email Address</label>
@@ -70,7 +73,7 @@ const Login = ({ onLogin, onSignup }) => {
           />
         </div>
 
-        {/* Forgot Password Link */}
+        {/* Forgot Password */}
         {isLogin && (
           <div className="forgot-password">
             <button

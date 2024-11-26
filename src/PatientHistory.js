@@ -51,51 +51,6 @@ const PatientHistory = ({ searchQuery }) => {
     }
   }, [searchQuery, history]);
 
-  // Handle "Delete Patient" button click
-  const deletePatient = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this patient?")) return;
-
-    try {
-      const response = await fetch(`http://localhost:3001/delete-patient/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        alert("Patient deleted successfully!");
-        fetchHistory(); // Refresh the history after deletion
-      } else {
-        const responseData = await response.json();
-        alert(`Failed to delete patient: ${responseData.error || "Unknown error"}`);
-      }
-    } catch (error) {
-      console.error("Error deleting patient:", error.message);
-      alert("An error occurred while deleting the patient.");
-    }
-  };
-
-  // Handle "Mark as Reviewed" button click
-  const markAsReviewed = async (id) => {
-    try {
-      const response = await fetch("http://localhost:3001/mark-reviewed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-
-      if (response.ok) {
-        alert("Patient marked as reviewed!");
-        fetchCurrentPatient(); // Refresh current patient
-        fetchHistory(); // Refresh history
-      } else {
-        const responseData = await response.json();
-        alert(`Failed to mark patient as reviewed: ${responseData.error || "Unknown error"}`);
-      }
-    } catch (error) {
-      console.error("Error marking as reviewed:", error.message);
-      alert("An error occurred while marking the patient as reviewed.");
-    }
-  };
-
   useEffect(() => {
     fetchCurrentPatient();
     fetchHistory();
@@ -112,7 +67,9 @@ const PatientHistory = ({ searchQuery }) => {
       {/* Current Patient Section */}
       {currentPatient ? (
         <div className="current-card">
-          <h3>Current Patient</h3>
+        <h3>Current Patient</h3>
+        <div className="patient-card">
+          <h4>{currentPatient.name}</h4>
           {currentPatient.profileImage && (
             <img
               src={currentPatient.profileImage}
@@ -121,7 +78,6 @@ const PatientHistory = ({ searchQuery }) => {
             />
           )}
           <p><strong>NIC:</strong> {currentPatient.NIC}</p>
-          <p><strong>Name:</strong> {currentPatient.name}</p>
           <p><strong>Age:</strong> {currentPatient.age}</p>
           <p><strong>Sex:</strong> {currentPatient.sex}</p>
           <p><strong>Contact:</strong> {currentPatient.contact}</p>
@@ -129,59 +85,33 @@ const PatientHistory = ({ searchQuery }) => {
           <p><strong>Allergies:</strong> {currentPatient.allergies}</p>
           <p><strong>Special Notes:</strong> {currentPatient.specialNotes}</p>
           <button
-            className="mark-reviewed-btn"
-            onClick={() => markAsReviewed(currentPatient.id)}
+            className="retrieve-btn"
+            onClick={() => console.log('Retrieve Button Clicked')} // Replace with actual logic
           >
-            Mark as Reviewed
+            Retrieve
           </button>
         </div>
+      </div>
+      
       ) : (
         <p>No current patient details available.</p>
       )}
 
       {/* Reviewed Patients History */}
       {filteredHistory.length > 0 ? (
-        <div className="history-section">
-          <h3>Reviewed Patients</h3>
-          <table className="history-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>NIC</th>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Sex</th>
-                <th>Contact</th>
-                <th>BMI</th>
-                <th>Allergies</th>
-                <th>Special Notes</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredHistory.map((record) => (
-                <tr key={record.id}>
-                  <td>{record.id}</td>
-                  <td>{record.NIC}</td>
-                  <td>{record.name}</td>
-                  <td>{record.age}</td>
-                  <td>{record.sex}</td>
-                  <td>{record.contact}</td>
-                  <td>{record.bmi}</td>
-                  <td>{record.allergies}</td>
-                  <td>{record.specialNotes}</td>
-                  <td>
-                    <button
-                      className="delete-btn"
-                      onClick={() => deletePatient(record.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="card-container">
+          {filteredHistory.map((record) => (
+            <div className="card" key={record.id}>
+              <h4>{record.name}</h4>
+              <p><strong>NIC:</strong> {record.NIC}</p>
+              <p><strong>Age:</strong> {record.age}</p>
+              <p><strong>Sex:</strong> {record.sex}</p>
+              <p><strong>Contact:</strong> {record.contact}</p>
+              <p><strong>BMI:</strong> {record.bmi}</p>
+              <p><strong>Allergies:</strong> {record.allergies}</p>
+              <p><strong>Special Notes:</strong> {record.specialNotes}</p>
+            </div>
+          ))}
         </div>
       ) : (
         <p>No matching patient history available.</p>

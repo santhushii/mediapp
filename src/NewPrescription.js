@@ -138,38 +138,26 @@ const NewPrescription = ({ searchQuery }) => {
           ></textarea>
         </div>
         <button type="submit" className="submit-btn">
-          Add New prescription
+          Add New Prescription
         </button>
         {successMessage && <p className="success-message">{successMessage}</p>}
       </form>
 
       {/* Display Section */}
-      <h3>Recorded New Prescription</h3>
+      <h3>Recorded New Prescriptions</h3>
       {filteredNewPrescription.length > 0 ? (
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Patient ID</th>
-              <th>Pressure Level</th>
-              <th>Sugar Level</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredNewPrescription.map((note) => (
-              <tr key={note.id}>
-                <td>{note.id}</td>
-                <td>{note.patientId}</td>
-                <td>{note.pressureLevel}</td>
-                <td>{note.sugarLevel}</td>
-                <td>{note.notes}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="card-container">
+          {filteredNewPrescription.map((note) => (
+            <div className="card" key={note.id}>
+              <h4>Patient ID: {note.patientId}</h4>
+              <p><strong>Pressure Level:</strong> {note.pressureLevel}</p>
+              <p><strong>Sugar Level:</strong> {note.sugarLevel}</p>
+              <p><strong>Notes:</strong> {note.notes}</p>
+            </div>
+          ))}
+        </div>
       ) : (
-        <p>No matching New Prescription recorded yet.</p>
+        <p>No matching New Prescriptions recorded yet.</p>
       )}
     </div>
   );

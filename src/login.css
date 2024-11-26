@@ -1,113 +1,170 @@
+/* Center the login container on the page */
 .login-container {
-    max-width: 400px;
-    margin: auto;
+  max-width: 500px; /* Increased width */
+  width: 90%; /* Ensure responsiveness */
+  margin: auto;
+  padding: 30px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Header style */
+h2 {
+  margin-bottom: 20px;
+  color: #333333;
+}
+
+/* Navbar alignment */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #007bff;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  color: #fff;
+}
+
+/* Navbar links */
+.navbar a {
+  text-decoration: none;
+  color: white;
+  padding: 10px 15px;
+}
+
+.navbar a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+/* Toggle buttons for login and signup */
+.toggle-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.toggle-buttons button {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  color: #333333;
+  transition: all 0.3s ease;
+}
+
+.toggle-buttons button.active {
+  color: #007bff;
+  font-weight: bold;
+  border-bottom: 2px solid #007bff;
+}
+
+/* Form groups for input fields */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  color: #666666;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Forgot password link */
+.forgot-password {
+  text-align: right;
+  margin-bottom: 15px;
+}
+
+.forgot-password-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.forgot-password-btn:hover {
+  color: #0056b3;
+}
+
+/* Submit button */
+.submit-btn {
+  width: 100%;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Signup prompt */
+.signup-prompt {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #666666;
+}
+
+/* Link buttons for signup and forgot password */
+.link-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.link-btn:hover {
+  color: #0056b3;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .login-container {
+    width: 90%; /* Use 90% of the viewport width */
     padding: 20px;
-    border-radius: 8px;
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    font-family: Arial, sans-serif;
-    text-align: center;
   }
-  
-  h2 {
-    margin-bottom: 20px;
-    color: #333333;
-  }
-  
-  .toggle-buttons {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  
-  .toggle-buttons button {
-    flex: 1;
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
     padding: 10px;
-    font-size: 16px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    color: #333333;
-    transition: all 0.3s ease;
   }
-  
-  .toggle-buttons button.active {
-    color: #007bff;
-    font-weight: bold;
-    border-bottom: 2px solid #007bff;
+
+  .navbar a {
+    padding: 5px 10px;
   }
-  
-  .form-group {
-    margin-bottom: 15px;
-    text-align: left;
-  }
-  
-  label {
-    display: block;
-    font-size: 14px;
-    color: #666666;
-    margin-bottom: 5px;
-  }
-  
-  input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-  
-  .forgot-password {
-    text-align: right;
-    margin-bottom: 15px;
-  }
-  
-  .forgot-password-btn {
-    background: none;
-    border: none;
-    color: #007bff;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: underline;
-  }
-  
-  .forgot-password-btn:hover {
-    color: #0056b3;
-  }
-  
-  .submit-btn {
-    width: 100%;
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-    padding: 10px;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .submit-btn:hover {
-    background-color: #0056b3;
-  }
-  
-  .signup-prompt {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #666666;
-  }
-  
-  .link-btn {
-    background: none;
-    border: none;
-    color: #007bff;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: underline;
-  }
-  
-  .link-btn:hover {
-    color: #0056b3;
-  }
-  
+}
