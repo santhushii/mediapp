@@ -15,6 +15,10 @@ Clone the repository:
 git clone <repository-url>
 cd <repository-folder>
 
+ Set Environment Variables
+ PORT=3001
+DB_PATH=./src/db/mediapp.db
+
 
 Setup the backend:
 
@@ -44,6 +48,6 @@ GET /get-patients: Get all reviewed patients
 DELETE /delete-patient/:id: Delete a reviewed patient
 
 
-New Prescription
-GET /new-prescription: Get New Prescription
-POST /submit-new-prescription: Add a New prescription
+Health Notes
+GET /health-notes: Get health notes
+POST /submit-health-note: Add a health note
