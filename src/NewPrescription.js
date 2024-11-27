@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 
 const NewPrescription = ({ searchQuery }) => {
-  const [NewPrescription, setNewPrescription] = useState([]);
-  const [filteredNewPrescription, setFilteredNewPrescription] = useState([]);
+  const [newPrescriptions, setNewPrescriptions] = useState([]);
+  const [filteredNewPrescriptions, setFilteredNewPrescriptions] = useState([]);
   const [formData, setFormData] = useState({
     patientId: "",
     pressureLevel: "",
@@ -13,39 +13,46 @@ const NewPrescription = ({ searchQuery }) => {
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Fetch existing New Prescription on component load
+  // Fetch existing New Prescriptions on component load
   useEffect(() => {
-    fetchNewPrescription();
+    fetchNewPrescriptions();
   }, []);
 
-  // Update filtered list whenever `NewPrescription` or `searchQuery` changes
+  // Update filtered list whenever `newPrescriptions` or `searchQuery` changes
   useEffect(() => {
     if (!searchQuery.trim()) {
-      setFilteredNewPrescription(NewPrescription);
+      setFilteredNewPrescriptions(newPrescriptions);
     } else {
-      const filtered = NewPrescription.filter(
+      const filtered = newPrescriptions.filter(
         (note) =>
-          note.patientId.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
-          note.pressureLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          note.sugarLevel.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          note.patientId
+            .toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          note.pressureLevel
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          note.sugarLevel
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
           (note.notes && note.notes.toLowerCase().includes(searchQuery.toLowerCase()))
       );
-      setFilteredNewPrescription(filtered);
+      setFilteredNewPrescriptions(filtered);
     }
-  }, [searchQuery, NewPrescription]);
+  }, [searchQuery, newPrescriptions]);
 
-  const fetchNewPrescription = async () => {
+  const fetchNewPrescriptions = async () => {
     try {
       const response = await fetch("http://localhost:3001/new-prescription");
       if (response.ok) {
         const data = await response.json();
-        setNewPrescription(data);
-        setFilteredNewPrescription(data); // Initialize filtered data
+        setNewPrescriptions(data);
+        setFilteredNewPrescriptions(data); // Initialize filtered data
       } else {
-        console.error("Failed to fetch New Prescription");
+        console.error("Failed to fetch New Prescriptions");
       }
     } catch (error) {
-      console.error("Error fetching New Prescription:", error);
+      console.error("Error fetching New Prescriptions:", error);
     }
   };
 
@@ -59,9 +66,22 @@ const NewPrescription = ({ searchQuery }) => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.patientId) newErrors.patientId = "Patient ID is required.";
-    if (!formData.pressureLevel) newErrors.pressureLevel = "Pressure level is required.";
-    if (!formData.sugarLevel) newErrors.sugarLevel = "Sugar level is required.";
+    if (!formData.patientId) {
+      newErrors.patientId = "Patient ID is required.";
+    } else if (!/^[a-zA-Z0-9]+$/.test(formData.patientId)) {
+      newErrors.patientId = "Patient ID must contain only letters and numbers.";
+    }
+    if (!formData.pressureLevel) {
+      newErrors.pressureLevel = "Pressure level is required.";
+    } else if (!/^[0-9./-]+$/.test(formData.pressureLevel)) {
+      newErrors.pressureLevel =
+        "Pressure level must contain only numbers and symbols.";
+    }
+    if (!formData.sugarLevel) {
+      newErrors.sugarLevel = "Sugar level is required.";
+    } else if (!/^[a-zA-Z0-9]+$/.test(formData.sugarLevel)) {
+      newErrors.sugarLevel = "Sugar level must contain only letters and numbers.";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -70,11 +90,14 @@ const NewPrescription = ({ searchQuery }) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const response = await fetch("http://localhost:3001/submit-new-prescription", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
+        const response = await fetch(
+          "http://localhost:3001/submit-new-prescription",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          }
+        );
         if (response.ok) {
           setSuccessMessage("New prescription added successfully!");
           setFormData({
@@ -83,7 +106,7 @@ const NewPrescription = ({ searchQuery }) => {
             sugarLevel: "",
             notes: "",
           });
-          fetchNewPrescription(); // Refresh the list
+          fetchNewPrescriptions(); // Refresh the list
         } else {
           console.error("Failed to save New prescription");
         }
@@ -145,14 +168,20 @@ const NewPrescription = ({ searchQuery }) => {
 
       {/* Display Section */}
       <h3>Recorded New Prescriptions</h3>
-      {filteredNewPrescription.length > 0 ? (
+      {filteredNewPrescriptions.length > 0 ? (
         <div className="card-container">
-          {filteredNewPrescription.map((note) => (
+          {filteredNewPrescriptions.map((note) => (
             <div className="card" key={note.id}>
               <h4>Patient ID: {note.patientId}</h4>
-              <p><strong>Pressure Level:</strong> {note.pressureLevel}</p>
-              <p><strong>Sugar Level:</strong> {note.sugarLevel}</p>
-              <p><strong>Notes:</strong> {note.notes}</p>
+              <p>
+                <strong>Pressure Level:</strong> {note.pressureLevel}
+              </p>
+              <p>
+                <strong>Sugar Level:</strong> {note.sugarLevel}
+              </p>
+              <p>
+                <strong>Notes:</strong> {note.notes}
+              </p>
             </div>
           ))}
         </div>
