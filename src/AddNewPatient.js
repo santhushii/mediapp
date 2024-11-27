@@ -20,9 +20,16 @@ const AddNewPatient = () => {
   const [errors, setErrors] = useState({});
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  // Handle input change for text and number inputs
+  // Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "NIC" && value.length > 12) return; // NIC: max 12 characters
+    if (name === "age" && !/^\d{0,3}$/.test(value)) return; // Age: only numbers, max 3 digits
+    if ((name === "contact" || name === "weight" || name === "height") && !/^\d*$/.test(value)) {
+      return; // Contact, Weight, Height: only numbers
+    }
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -35,12 +42,12 @@ const AddNewPatient = () => {
     if (file) {
       setFormData((prevData) => ({
         ...prevData,
-        profileImage: file, // Store the file object for uploading
+        profileImage: file,
       }));
     }
   };
 
-  // Calculate BMI based on weight and height
+  // Calculate BMI
   const calculateBMI = () => {
     const { weight, height } = formData;
     if (weight && height) {
@@ -53,30 +60,30 @@ const AddNewPatient = () => {
   // Validate form data
   const validateForm = () => {
     const newErrors = {};
-    Object.keys(formData).forEach((key) => {
-      if (!formData[key] && key !== "profileImage" && key !== "bmi") {
-        newErrors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`;
-      }
-    });
+    if (!formData.NIC) newErrors.NIC = "NIC is required.";
+    if (!formData.name) newErrors.name = "Name is required.";
+    if (!formData.age) newErrors.age = "Age is required.";
+    if (!formData.gender) newErrors.gender = "Gender is required.";
+    if (!formData.address) newErrors.address = "Address is required.";
+    if (!formData.contact) newErrors.contact = "Contact is required.";
+    if (!formData.weight) newErrors.weight = "Weight is required.";
+    if (!formData.height) newErrors.height = "Height is required.";
+    if (!formData.allergies) newErrors.allergies = "Allergies are required.";
+    if (!formData.specialNotes) newErrors.specialNotes = "Special notes are required.";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
 
     if (validateForm()) {
       const formDataToSend = new FormData();
       Object.keys(formData).forEach((key) => {
-        if (key === "profileImage" && formData[key]) {
-          formDataToSend.append(key, formData[key]);
-        } else {
-          formDataToSend.append(key, formData[key]);
-        }
+        formDataToSend.append(key, formData[key]);
       });
-
-      console.log("Form Data to Send (Debug):", ...formDataToSend.entries()); // Debugging: Check data
 
       try {
         const response = await fetch("http://localhost:3001/submit-form", {
@@ -87,7 +94,6 @@ const AddNewPatient = () => {
         if (response.ok) {
           alert("Form data saved successfully!");
           setShowSuccessMessage(true);
-          // Reset form data
           setFormData({
             NIC: "",
             name: "",
@@ -103,16 +109,12 @@ const AddNewPatient = () => {
             profileImage: null,
           });
         } else {
-          const errorData = await response.json();
-          console.error("Error from Server:", errorData);
           alert("Failed to save form data.");
         }
       } catch (error) {
         console.error("Error during submission:", error);
         alert("An error occurred while saving form data.");
       }
-    } else {
-      console.log("Validation Failed:", errors); // Debug validation errors
     }
   };
 
@@ -121,7 +123,6 @@ const AddNewPatient = () => {
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <h2>Add New Patient</h2>
 
-        {/* NIC Field */}
         <div className="form-group">
           <label>NIC:</label>
           <input
@@ -129,11 +130,11 @@ const AddNewPatient = () => {
             name="NIC"
             value={formData.NIC}
             onChange={handleInputChange}
+            placeholder="Enter NIC (max 12 characters)"
           />
           {errors.NIC && <p className="error">{errors.NIC}</p>}
         </div>
 
-        {/* Name Field */}
         <div className="form-group">
           <label>Name:</label>
           <input
@@ -141,11 +142,11 @@ const AddNewPatient = () => {
             name="name"
             value={formData.name}
             onChange={handleInputChange}
+            placeholder="Enter full name"
           />
           {errors.name && <p className="error">{errors.name}</p>}
         </div>
 
-        {/* Age Field */}
         <div className="form-group">
           <label>Age:</label>
           <input
@@ -153,11 +154,11 @@ const AddNewPatient = () => {
             name="age"
             value={formData.age}
             onChange={handleInputChange}
+            placeholder="Enter age (max 3 digits)"
           />
           {errors.age && <p className="error">{errors.age}</p>}
         </div>
 
-        {/* gender Field */}
         <div className="form-group">
           <label>Gender:</label>
           <select name="gender" value={formData.gender} onChange={handleInputChange}>
@@ -168,7 +169,6 @@ const AddNewPatient = () => {
           {errors.gender && <p className="error">{errors.gender}</p>}
         </div>
 
-        {/* Address Field */}
         <div className="form-group">
           <label>Address:</label>
           <input
@@ -176,11 +176,11 @@ const AddNewPatient = () => {
             name="address"
             value={formData.address}
             onChange={handleInputChange}
+            placeholder="Enter address"
           />
           {errors.address && <p className="error">{errors.address}</p>}
         </div>
 
-        {/* Contact Field */}
         <div className="form-group">
           <label>Contact:</label>
           <input
@@ -188,11 +188,11 @@ const AddNewPatient = () => {
             name="contact"
             value={formData.contact}
             onChange={handleInputChange}
+            placeholder="Enter contact number"
           />
           {errors.contact && <p className="error">{errors.contact}</p>}
         </div>
 
-        {/* Weight and Height */}
         <div className="form-group">
           <label>Weight (kg):</label>
           <input
@@ -203,9 +203,11 @@ const AddNewPatient = () => {
               handleInputChange(e);
               calculateBMI();
             }}
+            placeholder="Enter weight"
           />
           {errors.weight && <p className="error">{errors.weight}</p>}
         </div>
+
         <div className="form-group">
           <label>Height (cm):</label>
           <input
@@ -216,50 +218,47 @@ const AddNewPatient = () => {
               handleInputChange(e);
               calculateBMI();
             }}
+            placeholder="Enter height"
           />
           {errors.height && <p className="error">{errors.height}</p>}
         </div>
 
-        {/* BMI Field */}
         <div className="form-group">
           <label>BMI:</label>
           <input type="text" name="bmi" value={formData.bmi} readOnly />
         </div>
 
-        {/* Allergies Field */}
         <div className="form-group">
           <label>Allergies:</label>
           <textarea
             name="allergies"
             value={formData.allergies}
             onChange={handleInputChange}
+            placeholder="Enter allergies"
           />
           {errors.allergies && <p className="error">{errors.allergies}</p>}
         </div>
 
-        {/* Special Notes Field */}
         <div className="form-group">
           <label>Special Notes:</label>
           <textarea
             name="specialNotes"
             value={formData.specialNotes}
             onChange={handleInputChange}
+            placeholder="Enter special notes"
           />
           {errors.specialNotes && <p className="error">{errors.specialNotes}</p>}
         </div>
 
-        {/* Profile Image Upload */}
         <div className="form-group">
-          <label>Upload Profile Image:</label>
+          <label>Profile Image:</label>
           <input type="file" accept="image/*" onChange={handleImageUpload} />
         </div>
 
         <button type="submit" className="submit-btn">
           Submit
         </button>
-        {showSuccessMessage && (
-          <p className="success-message">Form data saved successfully!</p>
-        )}
+        {showSuccessMessage && <p className="success-message">Form submitted successfully!</p>}
       </form>
     </div>
   );
