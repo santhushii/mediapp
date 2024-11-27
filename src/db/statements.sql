@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS patient_form (
     NIC TEXT NOT NULL,
     name TEXT NOT NULL,
     age INTEGER NOT NULL,
-    sex TEXT NOT NULL,
+    gender TEXT NOT NULL,
     address TEXT NOT NULL,
     contact TEXT NOT NULL,
     weight REAL NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS patient_form (
 -- Insert statement to add a new patient record (placeholder values)
 -- Replace the `?` placeholders with actual values when running queries
 INSERT INTO patient_form (
-    NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes, profileImage, reviewed
+    NIC, name, age, gender, address, contact, weight, height, bmi, allergies, specialNotes, profileImage, reviewed
 ) VALUES (
     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0
 );
@@ -44,3 +44,11 @@ PRAGMA table_info(patient_form);
 
 -- Add 'profileImage' column only if it doesn't exist
 ALTER TABLE patient_form ADD COLUMN profileImage TEXT DEFAULT NULL;
+
+-- Drop and recreate the `users` table
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL
+);

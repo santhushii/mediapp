@@ -79,7 +79,7 @@ const PatientHistory = ({ searchQuery }) => {
           )}
           <p><strong>NIC:</strong> {currentPatient.NIC}</p>
           <p><strong>Age:</strong> {currentPatient.age}</p>
-          <p><strong>Sex:</strong> {currentPatient.sex}</p>
+          <p><strong>gender:</strong> {currentPatient.gender}</p>
           <p><strong>Contact:</strong> {currentPatient.contact}</p>
           <p><strong>BMI:</strong> {currentPatient.bmi}</p>
           <p><strong>Allergies:</strong> {currentPatient.allergies}</p>
@@ -105,7 +105,7 @@ const PatientHistory = ({ searchQuery }) => {
               <h4>{record.name}</h4>
               <p><strong>NIC:</strong> {record.NIC}</p>
               <p><strong>Age:</strong> {record.age}</p>
-              <p><strong>Sex:</strong> {record.sex}</p>
+              <p><strong>gender:</strong> {record.gender}</p>
               <p><strong>Contact:</strong> {record.contact}</p>
               <p><strong>BMI:</strong> {record.bmi}</p>
               <p><strong>Allergies:</strong> {record.allergies}</p>

@@ -6,7 +6,7 @@ const AddNewPatient = () => {
     NIC: "",
     name: "",
     age: "",
-    sex: "",
+    gender: "",
     address: "",
     contact: "",
     weight: "",
@@ -92,7 +92,7 @@ const AddNewPatient = () => {
             NIC: "",
             name: "",
             age: "",
-            sex: "",
+            gender: "",
             address: "",
             contact: "",
             weight: "",
@@ -157,15 +157,15 @@ const AddNewPatient = () => {
           {errors.age && <p className="error">{errors.age}</p>}
         </div>
 
-        {/* Sex Field */}
+        {/* gender Field */}
         <div className="form-group">
           <label>Gender:</label>
-          <select name="sex" value={formData.sex} onChange={handleInputChange}>
+          <select name="gender" value={formData.gender} onChange={handleInputChange}>
             <option value="">Select</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
-          {errors.sex && <p className="error">{errors.sex}</p>}
+          {errors.gender && <p className="error">{errors.gender}</p>}
         </div>
 
         {/* Address Field */}

@@ -1,23 +1,10 @@
-import React, { useState } from "react";
-import "./Navbar.css"; // Add your navbar-specific styles
+import React from "react";
+import "./Navbar.css";
 
-const Navbar = ({ activeTab, setActiveTab, onSearch }) => {
-  const [query, setQuery] = useState("");
-
-  const handleSearchChange = (e) => {
-    setQuery(e.target.value);
-    onSearch(e.target.value); // Trigger search on input change
-  };
-
+const Navbar = ({ activeTab, setActiveTab, onLogout }) => {
   return (
-    <nav className="navbar">
+    <div className="navbar">
       <div className="nav-links">
-        <button
-          className={activeTab === "form" ? "active" : ""}
-          onClick={() => setActiveTab("form")}
-        >
-          Add New Patient
-        </button>
         <button
           className={activeTab === "NewPrescription" ? "active" : ""}
           onClick={() => setActiveTab("NewPrescription")}
@@ -31,14 +18,26 @@ const Navbar = ({ activeTab, setActiveTab, onSearch }) => {
           Patient History
         </button>
       </div>
-      <input
-        type="text"
-        placeholder="Search..."
-        value={query}
-        onChange={handleSearchChange}
-        className="search-bar"
-      />
-    </nav>
+      <div className="action-container">
+        <button
+          className="add-new-btn"
+          onClick={() => setActiveTab("form")}
+        >
+          <span>+</span> Add New Patient
+        </button>
+        <div className="search-bar-container">
+          <input
+            type="text"
+            className="search-bar"
+            placeholder="Search patients... (Name, ID, etc.)"
+          />
+          <button className="search-btn">Search</button>
+        </div>
+      </div>
+      <button onClick={onLogout} className="logout-btn">
+        Logout
+      </button>
+    </div>
   );
 };
 

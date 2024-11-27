@@ -2,39 +2,63 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
 
-const Login = ({ onLogin, onSignup }) => {
+const Login = ({ setUser }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(true); // Toggle between Login and Signup
   const navigate = useNavigate();
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  // Handle form submission for login/signup
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!email || !password) {
       alert("Please fill in all fields.");
       return;
     }
 
-    if (isLogin) {
-      onLogin({ email, password });
-      navigate("/dashboard");
-    } else {
-      onSignup({ email, password });
-      navigate("/dashboard");
+    try {
+      const endpoint = isLogin
+        ? "http://localhost:3001/login"
+        : "http://localhost:3001/signup";
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        if (isLogin) {
+          // Save JWT token and set user
+          localStorage.setItem("token", data.token);
+          setUser({ email });
+          navigate("/dashboard");
+        } else {
+          alert("Signup successful! Please log in.");
+          setIsLogin(true); // Switch to login after successful signup
+        }
+      } else {
+        alert(data.error || "An error occurred. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error:", err.message);
+      alert("An error occurred. Please try again.");
     }
   };
 
-  // Navigate to Forgot Password page
+  // Handle navigation to Forgot Password page
   const handleForgotPassword = () => {
     navigate("/forgot-password");
   };
 
   return (
     <div className="login-container">
-      <h2>{isLogin ? "Login Form" : "Signup Form"}</h2>
+      <h2>{isLogin ? "Login" : "Signup"}</h2>
 
-      {/* Toggle Buttons */}
+      {/* Toggle between Login and Signup */}
       <div className="toggle-buttons">
         <button
           className={isLogin ? "active" : ""}
@@ -90,20 +114,6 @@ const Login = ({ onLogin, onSignup }) => {
           {isLogin ? "Login" : "Signup"}
         </button>
       </form>
-
-      {/* Signup Prompt */}
-      {isLogin && (
-        <p className="signup-prompt">
-          Not a member?{" "}
-          <button
-            type="button"
-            className="link-btn"
-            onClick={() => setIsLogin(false)}
-          >
-            Signup now
-          </button>
-        </p>
-      )}
     </div>
   );
 };

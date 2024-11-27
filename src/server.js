@@ -11,18 +11,21 @@ require("dotenv").config();
 
 const app = express();
 const PORT = 3001;
-const SECRET_KEY = process.env.SECRET_KEY || "your_jwt_secret"; // Use env variable for JWT secret
+const SECRET_KEY = process.env.SECRET_KEY || "your_jwt_secret";
+
+// Database setup
+const db = new sqlite3.Database("app.db", (err) => {
+  if (err) {
+    console.error("Database connection failed:", err.message);
+  } else {
+    console.log("Connected to SQLite database.");
+  }
+});
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Database Setup
-const db = new sqlite3.Database(path.resolve(__dirname, "app.db"), (err) => {
-  if (err) console.error("Database connection failed:", err.message);
-  else console.log("Connected to SQLite database.");
-});
 
 // Ensure Tables Exist
 db.serialize(() => {
@@ -37,7 +40,7 @@ db.serialize(() => {
       NIC TEXT NOT NULL,
       name TEXT NOT NULL,
       age INTEGER,
-      sex TEXT,
+      gender TEXT,
       address TEXT,
       contact TEXT,
       weight REAL,
@@ -82,8 +85,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 app.use("/uploads", express.static(uploadDir));
 
-// Routes
-
 // Forgot Password
 app.post("/forgot-password", (req, res) => {
   const { email } = req.body;
@@ -98,41 +99,44 @@ app.post("/forgot-password", (req, res) => {
   });
 });
 
-// Signup
+// Signup Endpoint
 app.post("/signup", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required." });
   }
 
-  try {
+  db.get("SELECT * FROM users WHERE email = ?", [email], async (err, user) => {
+    if (err) {
+      return res.status(500).json({ error: "Database error during email check." });
+    }
+
+    if (user) {
+      return res.status(409).json({ error: "Email already exists." });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     db.run(
-      `INSERT INTO users (email, password) VALUES (?, ?)`,
+      "INSERT INTO users (email, password) VALUES (?, ?)",
       [email, hashedPassword],
       function (err) {
         if (err) {
-          if (err.message.includes("UNIQUE")) {
-            return res.status(409).json({ error: "Email already exists." });
-          }
-          return res.status(500).json({ error: "Database error." });
+          return res.status(500).json({ error: "Failed to register user." });
         }
         res.status(201).json({ message: "User registered successfully!" });
       }
     );
-  } catch (err) {
-    res.status(500).json({ error: "Internal server error." });
-  }
+  });
 });
 
-// Login
+// Login Endpoint
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required." });
   }
 
-  db.get(`SELECT * FROM users WHERE email = ?`, [email], async (err, user) => {
+  db.get("SELECT * FROM users WHERE email = ?", [email], async (err, user) => {
     if (err) return res.status(500).json({ error: "Database error." });
     if (!user) return res.status(401).json({ error: "Invalid credentials." });
 
@@ -152,7 +156,7 @@ app.post("/submit-form", upload.single("profileImage"), (req, res) => {
     NIC,
     name,
     age,
-    sex,
+    gender,
     address,
     contact,
     weight,
@@ -165,9 +169,9 @@ app.post("/submit-form", upload.single("profileImage"), (req, res) => {
   const profileImage = req.file ? req.file.filename : null;
 
   db.run(
-    `INSERT INTO patient_form (NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes, profileImage, reviewed) 
+    `INSERT INTO patient_form (NIC, name, age, gender, address, contact, weight, height, bmi, allergies, specialNotes, profileImage, reviewed) 
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
-    [NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes, profileImage],
+    [NIC, name, age, gender, address, contact, weight, height, bmi, allergies, specialNotes, profileImage],
     function (err) {
       if (err) return res.status(500).json({ error: "Failed to save form data." });
       res.status(200).json({ message: "Form data saved successfully!" });
@@ -230,7 +234,7 @@ app.post("/submit-new-prescription", (req, res) => {
     `INSERT INTO new_prescription (patientId, pressureLevel, sugarLevel, notes) VALUES (?, ?, ?, ?)`,
     [patientId, pressureLevel, sugarLevel, notes],
     function (err) {
-      if (err) return res.status(500).json({ error: "Failed to save New prescription." });
+      if (err) return res.status(500).json({ error: "Failed to save new prescription." });
       res.status(200).json({ message: "New prescription added successfully!" });
     }
   );
@@ -239,7 +243,7 @@ app.post("/submit-new-prescription", (req, res) => {
 // Fetch New Prescription
 app.get("/new-prescription", (req, res) => {
   db.all("SELECT * FROM new_prescription", (err, rows) => {
-    if (err) return res.status(500).json({ error: "Failed to fetch New Prescription." });
+    if (err) return res.status(500).json({ error: "Failed to fetch new prescriptions." });
     res.status(200).json(rows || []);
   });
 });

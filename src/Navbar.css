@@ -28,7 +28,8 @@
     font-size: 16px;
     padding: 8px 12px;
     cursor: pointer;
-    text-transform: capitalize; /* Ensure proper capitalization */
+    text-transform: capitalize;
+    transition: all 0.3s ease;
 }
 
 .navbar .nav-links button:hover {
@@ -36,11 +37,19 @@
     color: #e2e2e2;
 }
 
-/* Action Container (Center and Right) */
+/* Highlight Active Tab */
+.navbar .nav-links button.active {
+    background-color: white;
+    color: #007bff;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Action Container (Right) */
 .navbar .action-container {
     display: flex;
     align-items: center;
-    gap: 20px; /* Space between Add New Patient and Search Bar */
+    gap: 20px;
 }
 
 /* Add New Patient Button */
@@ -55,11 +64,11 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px; /* Gap between the "+" icon and text */
+    gap: 8px;
 }
 
 .navbar .add-new-btn span {
-    font-size: 18px; /* Size for the "+" icon */
+    font-size: 18px;
     font-weight: bold;
 }
 
@@ -105,31 +114,18 @@
     color: #007bff;
 }
 
-/* Active Button Highlight */
-.navbar .nav-links button.active,
-.navbar .add-new-btn.active {
-    background-color: white;
-    color: #007bff;
-    border: 1px solid #007bff;
-    font-weight: bold;
-}
-
-/* Default Button Styling */
-.navbar .nav-links button,
-.navbar .add-new-btn {
+/* Logout Button */
+.navbar .logout-btn {
+    background-color: #dc3545;
     color: white;
-    background-color: transparent;
     border: none;
-    font-size: 16px;
-    padding: 8px 12px;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 14px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-/* Button Hover */
-.navbar .nav-links button:hover,
-.navbar .add-new-btn:hover {
-    background-color: #0056b3;
-    color: white;
-    border-radius: 5px;
+.navbar .logout-btn:hover {
+    background-color: #c82333;
 }

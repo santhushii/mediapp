@@ -3,7 +3,7 @@ const db = require('./db/db'); // Import the database setup file
 // Insert data into the `patient_form` table
 try {
     const stmt = db.prepare(`
-        INSERT INTO patient_form (NIC, name, age, sex, address, contact, weight, height, bmi, allergies, specialNotes, profileImage, reviewed)
+        INSERT INTO patient_form (NIC, name, age, gender, address, contact, weight, height, bmi, allergies, specialNotes, profileImage, reviewed)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
@@ -12,7 +12,7 @@ try {
         '987654321V',       // NIC
         'John Doe',         // Name
         30,                 // Age
-        'male',             // Sex
+        'male',             // gender
         '123 Main St',      // Address
         '0771234567',       // Contact
         75,                 // Weight in kg
