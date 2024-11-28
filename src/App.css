@@ -7,179 +7,32 @@
     border-radius: 5px;
     border: 1px solid #ddd;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Current Card Styles */
-.current-card {
-    border: 1px solid #ddd;
-    padding: 16px;
-    margin-bottom: 16px;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    width: 80%;
-    margin: 0 auto 16px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.current-card h3 {
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.current-card h4 {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #007bff;
-}
-
-.current-card img.profile-image {
-    max-width: 150px;
-    border-radius: 50%;
-    display: block;
-    margin: 0 auto 16px;
-}
-
-.current-card p {
-    margin: 8px 0;
-    font-size: 14px;
-    color: #333;
-}
-
-.current-card button {
-    display: block;
-    margin: 16px auto;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.current-card button:hover {
-    background-color: #0056b3;
-}
-
-/* General Card Styling */
-.patient-card {
-    border: 1px solid #ddd;
-    padding: 16px;
-    margin-bottom: 16px;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.patient-card h4 {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #007bff;
-}
-
-.patient-card img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 15px;
-}
-
-.patient-card p {
-    font-size: 14px;
-    margin: 5px 0;
-}
-
-.patient-card .retrieve-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
-}
-
-.patient-card .retrieve-btn:hover {
-    background-color: #0056b3;
-}
-
-/* Card Container for New Prescription */
-.card-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-
-/* Individual Card Style */
-.card {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
-    width: 300px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.card h4 {
-    font-size: 18px;
-    color: #007bff;
-    margin-bottom: 12px;
-}
-
-.card p {
-    font-size: 14px;
-    margin: 8px 0;
-    color: #333;
-}
-
-/* Success and Error Messages */
-.error {
-    color: red;
-    font-size: 12px;
-    margin-top: 5px;
-}
-
-.success-message {
-    color: green;
-    text-align: center;
-    font-size: 14px;
-    margin-top: 10px;
-}
-
-/* Form Styles */
-input[type="text"],
-input[type="number"],
-select,
-textarea {
+  }
+  
+  /* Form Styles */
+  input[type="text"],
+  input[type="number"],
+  select,
+  textarea {
     width: 100%;
     padding: 10px;
     margin: 8px 0;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-}
-
-textarea {
+  }
+  
+  textarea {
     resize: vertical;
-}
-
-label {
+  }
+  
+  label {
     font-weight: bold;
     color: #333;
-}
-
-/* Submit Button for Forms */
-.submit-btn {
+  }
+  
+  /* Submit Button for Forms */
+  .submit-btn {
     display: block;
     margin: 20px auto;
     padding: 12px 24px;
@@ -190,47 +43,137 @@ label {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
-}
-
-.submit-btn:hover {
+  }
+  
+  .submit-btn:hover {
     background-color: #0056b3;
-}
-
-/* General Headers */
-h2,
-h3 {
-    text-align: center;
-    margin-top: 16px;
-    font-family: Arial, sans-serif;
-    color: #333;
-}
-
-/* Utility Table Styles (for other sections if needed) */
-table {
+  }
+  
+  /* Utility Table Styles (for other sections if needed) */
+  table {
     width: 90%;
     margin: 16px auto;
     border-collapse: collapse;
     border: 1px solid #ddd;
     font-size: 14px;
-}
-
-table th,
-table td {
+  }
+  
+  table th,
+  table td {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: left;
-}
-
-table th {
+  }
+  
+  table th {
     background-color: #f4f4f4;
     font-weight: bold;
     text-align: center;
-}
-
-table tr:nth-child(even) {
+  }
+  
+  table tr:nth-child(even) {
     background-color: #f9f9f9;
-}
-
-table tr:hover {
+  }
+  
+  table tr:hover {
     background-color: #f1f1f1;
-}
+  }
+  
+  /* Success and Error Messages */
+  .error {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  .success-message {
+    color: green;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  
+  /* General Headers */
+  h2,
+  h3 {
+    text-align: center;
+    margin-top: 16px;
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  /* Patient History Styles */
+.patient-history-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .patient-card {
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    width: 100%;
+    max-width: 600px;
+    margin: 10px auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .patient-card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .patient-card h4 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #007bff;
+  }
+  
+  .patient-card p {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+  
+  /* Add New Patient Button */
+  .add-new-patient {
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .submit-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Patient History Section */
+  .patient-history-section {
+    margin-top: 20px;
+  }
+  
+  .history-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .history-list .patient-card {
+    width: 300px;
+  }
+  
