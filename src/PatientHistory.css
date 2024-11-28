@@ -1,6 +1,6 @@
 .patient-history-container {
     padding: 20px;
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
   }
   
@@ -10,46 +10,48 @@
     border-radius: 8px;
     background-color: #f9f9f9;
     width: 100%;
-    max-width: 600px;
+    max-width: 1000px; /* Increase the max-width for a single-row layout */
     margin: 10px auto;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Align content in a single row */
+    gap: 20px;
   }
   
-  .centered-card {
-    margin: 0 auto;
-    text-align: center;
-  }
-  
-  .patient-image {
+  .patient-card img {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    margin-bottom: 10px;
+  }
+  
+  .patient-details {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap; /* Ensure details don't overflow */
+  }
+  
+  .patient-details p {
+    margin: 5px 10px; /* Add spacing between details */
+    white-space: nowrap; /* Prevent text wrapping */
   }
   
   .patient-card h4 {
+    margin: 0 10px;
     font-size: 18px;
     font-weight: bold;
-    margin-bottom: 10px;
     color: #007bff;
   }
   
-  .patient-card p {
-    font-size: 14px;
-    margin: 5px 0;
-  }
   
   .add-patient-btn {
-    display: inline-block;
     padding: 10px 20px;
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 4px;
-    font-size: 16px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
   }
   
   .add-patient-btn:hover {
@@ -58,8 +60,21 @@
   
   .history-list {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+    flex-direction: column; /* Stack cards vertically */
+    gap: 15px;
+  }
+  
+  @media (max-width: 768px) {
+    .patient-card {
+      flex-direction: column; /* Stack content vertically for smaller screens */
+      align-items: flex-start;
+      padding: 20px;
+    }
+  
+    .patient-details {
+      flex-direction: column; /* Stack details vertically */
+      align-items: flex-start;
+      gap: 10px;
+    }
   }
   

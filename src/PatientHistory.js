@@ -87,27 +87,22 @@ const PatientHistory = () => {
       <div className="current-patient-section">
         <h3>Current Patient</h3>
         {currentPatient ? (
-          <div className="patient-card centered-card">
+          <div className="patient-card">
             <img
               src={currentPatient.profileImage || "default-profile.png"}
               alt={currentPatient.name}
               className="patient-image"
             />
-            <h4>{currentPatient.name}</h4>
-            <p>
-              <strong>NIC:</strong> {currentPatient.NIC}{" "}
-              <strong>Age:</strong> {currentPatient.age}{" "}
-              <strong>Gender:</strong> {currentPatient.gender}
-            </p>
-            <p>
-              <strong>Contact:</strong> {currentPatient.contact}{" "}
-              <strong>BMI:</strong> {currentPatient.bmi}{" "}
-              <strong>Allergies:</strong> {currentPatient.allergies || "None"}
-            </p>
-            <p>
-              <strong>Special Notes:</strong>{" "}
-              {currentPatient.specialNotes || "None"}
-            </p>
+            <div className="patient-details">
+              <p><strong>Name:</strong> {currentPatient.name}</p>
+              <p><strong>NIC:</strong> {currentPatient.NIC}</p>
+              <p><strong>Age:</strong> {currentPatient.age}</p>
+              <p><strong>Gender:</strong> {currentPatient.gender}</p>
+              <p><strong>Contact:</strong> {currentPatient.contact}</p>
+              <p><strong>BMI:</strong> {currentPatient.bmi}</p>
+              <p><strong>Allergies:</strong> {currentPatient.allergies || "None"}</p>
+              <p><strong>Special Notes:</strong> {currentPatient.specialNotes || "None"}</p>
+            </div>
             <button className="add-patient-btn" onClick={addNewPatient}>
               Add New Patient
             </button>
@@ -129,21 +124,16 @@ const PatientHistory = () => {
                   alt={patient.name}
                   className="patient-image"
                 />
-                <h4>{patient.name}</h4>
-                <p>
-                  <strong>NIC:</strong> {patient.NIC}{" "}
-                  <strong>Age:</strong> {patient.age}{" "}
-                  <strong>Gender:</strong> {patient.gender}
-                </p>
-                <p>
-                  <strong>Contact:</strong> {patient.contact}{" "}
-                  <strong>BMI:</strong> {patient.bmi}{" "}
-                  <strong>Allergies:</strong> {patient.allergies || "None"}
-                </p>
-                <p>
-                  <strong>Special Notes:</strong>{" "}
-                  {patient.specialNotes || "None"}
-                </p>
+                <div className="patient-details">
+                  <p><strong>Name:</strong> {patient.name}</p>
+                  <p><strong>NIC:</strong> {patient.NIC}</p>
+                  <p><strong>Age:</strong> {patient.age}</p>
+                  <p><strong>Gender:</strong> {patient.gender}</p>
+                  <p><strong>Contact:</strong> {patient.contact}</p>
+                  <p><strong>BMI:</strong> {patient.bmi}</p>
+                  <p><strong>Allergies:</strong> {patient.allergies || "None"}</p>
+                  <p><strong>Special Notes:</strong> {patient.specialNotes || "None"}</p>
+                </div>
               </div>
             ))}
           </div>
