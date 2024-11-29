@@ -10,7 +10,7 @@ const sqlite3 = require("sqlite3").verbose();
 require("dotenv").config();
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const SECRET_KEY = process.env.SECRET_KEY || "your_jwt_secret";
 
 // Database setup
@@ -85,19 +85,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 app.use("/uploads", express.static(uploadDir));
 
-// Forgot Password
-app.post("/forgot-password", (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ error: "Email is required." });
-
-  db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    if (!user) return res.status(404).json({ error: "Email not found" });
-
-    console.log(`Reset link sent to ${email}`);
-    res.status(200).json({ message: "Reset instructions sent to your email!" });
-  });
-});
+// --- Authentication Routes ---
 
 // Signup Endpoint
 app.post("/signup", async (req, res) => {
@@ -149,6 +137,22 @@ app.post("/login", (req, res) => {
     res.status(200).json({ message: "Login successful!", token });
   });
 });
+
+// Forgot Password Endpoint
+app.post("/forgot-password", (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "Email is required." });
+
+  db.get("SELECT * FROM users WHERE email = ?", [email], (err, user) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+    if (!user) return res.status(404).json({ error: "Email not found" });
+
+    console.log(`Reset link sent to ${email}`);
+    res.status(200).json({ message: "Reset instructions sent to your email!" });
+  });
+});
+
+// --- Patient Form Routes ---
 
 // Submit Add New Patient
 app.post("/submit-form", upload.single("profileImage"), (req, res) => {
@@ -222,6 +226,8 @@ app.delete("/delete-patient/:id", (req, res) => {
   });
 });
 
+// --- Prescription Routes ---
+
 // Submit New Prescription
 app.post("/submit-new-prescription", (req, res) => {
   const { patientId, pressureLevel, sugarLevel, notes } = req.body;
@@ -248,7 +254,7 @@ app.get("/new-prescription", (req, res) => {
   });
 });
 
-// Start the Server
+// --- Start the Server ---
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
