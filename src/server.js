@@ -10,10 +10,10 @@ const sqlite3 = require("sqlite3").verbose();
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4000;
 const SECRET_KEY = process.env.SECRET_KEY || "your_jwt_secret";
 
-// Database setup
+// SQLite Database Initialization
 const db = new sqlite3.Database("app.db", (err) => {
   if (err) {
     console.error("Database connection failed:", err.message);
@@ -86,7 +86,6 @@ const upload = multer({ storage });
 app.use("/uploads", express.static(uploadDir));
 
 // --- Authentication Routes ---
-
 // Signup Endpoint
 app.post("/signup", async (req, res) => {
   const { email, password } = req.body;
@@ -153,7 +152,6 @@ app.post("/forgot-password", (req, res) => {
 });
 
 // --- Patient Form Routes ---
-
 // Submit Add New Patient
 app.post("/submit-form", upload.single("profileImage"), (req, res) => {
   const {
@@ -227,7 +225,6 @@ app.delete("/delete-patient/:id", (req, res) => {
 });
 
 // --- Prescription Routes ---
-
 // Submit New Prescription
 app.post("/submit-new-prescription", (req, res) => {
   const { patientId, pressureLevel, sugarLevel, notes } = req.body;
@@ -255,6 +252,6 @@ app.get("/new-prescription", (req, res) => {
 });
 
 // --- Start the Server ---
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
