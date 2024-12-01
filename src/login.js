@@ -19,8 +19,8 @@ const Login = ({ setUser }) => {
 
     try {
       const endpoint = isLogin
-        ? "http://localhost:3001/login"
-        : "http://localhost:3001/signup";
+        ? "http://localhost:5000/login"
+        : "http://localhost:5000/signup";
 
       const response = await fetch(endpoint, {
         method: "POST",

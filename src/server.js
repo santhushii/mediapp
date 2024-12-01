@@ -10,7 +10,7 @@ const sqlite3 = require("sqlite3").verbose();
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 const SECRET_KEY = process.env.SECRET_KEY || "your_jwt_secret";
 
 // SQLite Database Initialization
